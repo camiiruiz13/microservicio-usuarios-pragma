@@ -13,11 +13,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GenericResponseDTO implements Serializable {
+public class GenericResponseDTO<T>
+
+        implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public String mensaje;
-    public Object respuesta;
-    public int codigo;
+    public String message;
+    private T objectResponse;
+    public int statusCode;
 
 }

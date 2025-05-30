@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exception.ErrorException.CORREO_NO_EXIST;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.CORREO_NO_EXIST;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

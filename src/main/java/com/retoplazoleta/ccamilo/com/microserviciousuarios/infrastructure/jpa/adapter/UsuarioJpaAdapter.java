@@ -8,7 +8,7 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.re
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exception.ErrorException.CORREO_NO_EXIST;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.CORREO_NO_EXIST;
 
 
 @RequiredArgsConstructor

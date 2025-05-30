@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -31,7 +30,6 @@ class UserDetailsAdapterTest {
     @Test
     @Order(1)
     void loadUserByUsername_debeRetornarAuthenticatedUserCorrectamente() {
-
         String username = "test@correo.com";
         Long userId = 1L;
 
@@ -51,13 +49,16 @@ class UserDetailsAdapterTest {
         assertInstanceOf(AuthenticatedUser.class, userDetails);
 
         AuthenticatedUser authenticatedUser = (AuthenticatedUser) userDetails;
-        assertEquals(userId.toString(), authenticatedUser.getUsername());
+
+
+        assertEquals(userId.toString(), authenticatedUser.getIdUser());
         assertEquals(username, authenticatedUser.getUsername());
+        assertEquals(username, authenticatedUser.getPassword());
+
         assertEquals(1, authenticatedUser.getAuthorities().size());
         assertTrue(authenticatedUser.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")));
 
         verify(userPersistencePort).getUsuarioByCorreo(username);
-
     }
 }

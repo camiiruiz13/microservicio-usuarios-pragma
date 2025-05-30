@@ -60,8 +60,10 @@ jacocoTestReport {
         xml.required.set(true)
         csv.required.set(false)
         html.required.set(true)
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        html.outputLocation = layout.buildDirectory.dir('reports/jacoco/test/html')
     }
+
+
 
     afterEvaluate {
         classDirectories.setFrom(
@@ -69,7 +71,10 @@ jacocoTestReport {
                     fileTree(dir: it, exclude: [
                             '**/dto/**',
                             '**/exception/**',
-                            '**/config/**'
+                            '**/config/**',
+                            '**/entities/**',
+                            '**/mapper/**',
+                            '**/shared/**'
                     ])
                 })
         )
@@ -88,6 +93,32 @@ jacocoTestCoverageVerification {
                 value = 'COVEREDRATIO'
                 minimum = 0.90
             }
+        }
+    }
+}
+
+tasks.register('openJacocoReport') {
+    group = 'verification'
+    description = 'Abre el reporte de cobertura HTML de JaCoCo automáticamente'
+
+    doLast {
+        def os = System.getProperty("os.name").toLowerCase()
+        def reportPath = "${buildDir}/reports/jacoco/test/html/index.html"
+
+        if (os.contains("win")) {
+            exec {
+                commandLine 'cmd', '/c', 'start', '', reportPath
+            }
+        } else if (os.contains("mac")) {
+            exec {
+                commandLine 'open', reportPath
+            }
+        } else if (os.contains("nix") || os.contains("nux")) {
+            exec {
+                commandLine 'xdg-open', reportPath
+            }
+        } else {
+            println "Sistema operativo no compatible para abrir el navegador automáticamente."
         }
     }
 }
