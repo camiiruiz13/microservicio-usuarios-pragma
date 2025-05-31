@@ -19,6 +19,15 @@ public class AuthenticatedUser implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
+    public String getRol() {
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(auth -> auth.startsWith("ROLE_"))
+                .map(auth -> auth.replace("ROLE_", ""))
+                .findFirst()
+                .orElse(null);
+
+    }
 
     @Override
     public boolean isAccountNonExpired() {

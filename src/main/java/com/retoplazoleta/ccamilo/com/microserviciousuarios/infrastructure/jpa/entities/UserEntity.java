@@ -25,6 +25,9 @@ public class UserEntity {
     @Column(name = "numero_documento", unique = true, nullable = true)
     private String numeroDocumento;
 
+    @Column(name = "celular",  nullable = true)
+    private String celular;
+
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 

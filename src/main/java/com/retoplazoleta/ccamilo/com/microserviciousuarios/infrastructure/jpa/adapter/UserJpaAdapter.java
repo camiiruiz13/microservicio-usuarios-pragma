@@ -12,11 +12,11 @@ import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure
 
 
 @RequiredArgsConstructor
-public class UsuarioJpaAdapter  implements IUserPersistencePort {
+public class UserJpaAdapter implements IUserPersistencePort {
 
+    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final UserEntityMapper userEntityMapper;
-    private final RoleRepository roleRepository;
 
 
     @Override

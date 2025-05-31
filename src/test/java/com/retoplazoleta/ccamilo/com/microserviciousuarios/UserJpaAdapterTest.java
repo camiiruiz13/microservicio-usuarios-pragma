@@ -2,7 +2,7 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exception.NoDataFoundException;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.adapter.UsuarioJpaAdapter;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.adapter.UserJpaAdapter;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.UserEntity;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.mapper.UserEntityMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.repositories.RoleRepository;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UsuarioJpaAdapterTest  {
+class UserJpaAdapterTest {
 
     @Mock
     private UserRepository userRepository;
@@ -37,7 +37,7 @@ class UsuarioJpaAdapterTest  {
     private RoleRepository roleRepository;
 
     @InjectMocks
-    private UsuarioJpaAdapter usuarioJpaAdapter;
+    private UserJpaAdapter userJpaAdapter;
 
     @Test
     @Order(1)
@@ -50,7 +50,7 @@ class UsuarioJpaAdapterTest  {
         when(userRepository.findByCorreo(correo)).thenReturn(Optional.of(userEntity));
         when(userEntityMapper.toUserModel(userEntity)).thenReturn(user);
 
-        User resultado = usuarioJpaAdapter.getUsuarioByCorreo(correo);
+        User resultado = userJpaAdapter.getUsuarioByCorreo(correo);
 
         assertNotNull(resultado);
         verify(userRepository).findByCorreo(correo);
@@ -66,7 +66,7 @@ class UsuarioJpaAdapterTest  {
         when(userRepository.findByCorreo(correo)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(NoDataFoundException.class, () ->
-                usuarioJpaAdapter.getUsuarioByCorreo(correo)
+                userJpaAdapter.getUsuarioByCorreo(correo)
         );
 
         assertEquals(CORREO_NO_EXIST.getMessage(), exception.getMessage());
