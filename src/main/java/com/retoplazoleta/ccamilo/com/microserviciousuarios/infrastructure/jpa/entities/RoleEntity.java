@@ -1,16 +1,21 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(
         name = "roles",
         uniqueConstraints = @UniqueConstraint(name = "uk_roles_nombre", columnNames = "nombre")
 )
+
 public class RoleEntity {
 
 

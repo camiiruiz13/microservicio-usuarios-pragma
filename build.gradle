@@ -77,7 +77,11 @@ jacocoTestReport {
                             '**/mapper/**',
                             '**/security/handler/CustomAccessDeniedHandler.class',
                             '**/security/handler/CustomAuthenticationEntryPoint.class',
-                            '**/shared/**'
+                            '**/security/jwt/SimpleGrantedAuthorityJsonCreator.class',
+                            '**/shared/**',
+                            '**/auth/**',
+                            '**/MicroservicioUsuariosApplication.class',
+                            '**/exceptionhandler/**',
                     ])
                 })
         )
