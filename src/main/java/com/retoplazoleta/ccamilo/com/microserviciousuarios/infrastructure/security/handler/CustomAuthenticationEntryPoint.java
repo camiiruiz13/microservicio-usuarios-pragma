@@ -1,7 +1,6 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.handler;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.TINVALID_TOKEN;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.INVALID_TOKEN;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -28,7 +27,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException) throws IOException {
 
         Map<String, Object> error = new HashMap<>();
-        error.put(MENSAJE, TINVALID_TOKEN);
+        error.put(MENSAJE, INVALID_TOKEN);
         error.put(CODIGO , HttpStatus.FORBIDDEN.value());
         error.put(ERROR, authException.getMessage());
 

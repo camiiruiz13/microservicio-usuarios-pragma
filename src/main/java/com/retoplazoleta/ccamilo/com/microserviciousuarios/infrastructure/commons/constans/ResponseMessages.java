@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResponseMessages {
 
+    CREATE_USER_SUCCES("Se ha creado el usuario correctamente"),
     SESSION_SUCCES("Inicio de sesion exitoso"),
     TOKEN_INVALIDO("El token JWT es invalido!");
 

@@ -7,7 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "roles")
+@Table(
+        name = "roles",
+        uniqueConstraints = @UniqueConstraint(name = "uk_roles_nombre", columnNames = "nombre")
+)
 public class RoleEntity {
 
 
@@ -15,7 +18,7 @@ public class RoleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", unique = true, nullable = false)
     private String nombre;
 
     @Column(name = "descripcion")

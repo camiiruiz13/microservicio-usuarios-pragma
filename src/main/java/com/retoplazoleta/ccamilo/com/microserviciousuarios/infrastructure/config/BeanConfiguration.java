@@ -8,24 +8,33 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.ma
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.repositories.RoleRepository;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
 public class BeanConfiguration {
 
+
+    private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final UserEntityMapper userEntityMapper;
 
     @Bean
     IUserPersistencePort userPersistencePort(){
-     return new UserJpaAdapter(roleRepository, userRepository, userEntityMapper);
+     return new UserJpaAdapter(passwordEncoder,roleRepository, userRepository, userEntityMapper);
     }
 
     @Bean
     IUserServicePort userServicePort(){
         return new UserUseCase(userPersistencePort());
+    }
+
+    @Bean
+    ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

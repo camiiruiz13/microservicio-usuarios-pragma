@@ -9,7 +9,8 @@ public enum ErrorException {
 
     CORREO_NO_EXIST("Correo no encontrado"),
     ACCES_DENIED("Acceso denegado: No tiene permisos para realizar esta operación"),
-    TINVALID_TOKEN("No autorizado: token inválido o no enviado"),
+    INVALID_TOKEN("No autorizado: token inválido o no enviado"),
+    ERROR_EXCEPTION("Ha ocurrido un error inesperado"),
     ERROR_CREDENCIALES("Error al leer las credenciales del usuario");
 
     private final String message;

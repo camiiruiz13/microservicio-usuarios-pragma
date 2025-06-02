@@ -17,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.BASE_URL;
+
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -26,7 +28,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     private static final String[] WHITE_LIST_URL = {
-            "/api/users/**"
+           BASE_URL + "/**"
     };
 
 

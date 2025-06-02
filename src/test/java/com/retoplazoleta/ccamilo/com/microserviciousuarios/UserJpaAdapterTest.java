@@ -65,11 +65,9 @@ class UserJpaAdapterTest {
         String correo = "noexiste@correo.com";
         when(userRepository.findByCorreo(correo)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(NoDataFoundException.class, () ->
-                userJpaAdapter.getUsuarioByCorreo(correo)
-        );
+        User result = userJpaAdapter.getUsuarioByCorreo(correo);
 
-        assertEquals(CORREO_NO_EXIST.getMessage(), exception.getMessage());
+        assertNull(result);
         verify(userRepository).findByCorreo(correo);
         verifyNoInteractions(userEntityMapper);
     }

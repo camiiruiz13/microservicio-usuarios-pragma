@@ -4,4 +4,6 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.en
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
+
+    RoleEntity findByNombre(String name);
 }

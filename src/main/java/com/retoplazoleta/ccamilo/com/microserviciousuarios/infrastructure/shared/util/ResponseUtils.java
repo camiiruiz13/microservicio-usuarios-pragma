@@ -19,12 +19,25 @@ public class ResponseUtils {
     }
 
     public static <T> GenericResponseDTO<T> buildResponse(String message, T objectResponse, HttpStatus status) {
+
+        if (objectResponse == null) {
+            return GenericResponseDTO.<T>builder()
+                    .message(message)
+                    .statusCode(status.value())
+                    .build();
+        }
+
         return GenericResponseDTO.<T>builder()
                 .message(message)
                 .objectResponse(objectResponse)
                 .statusCode(status.value())
                 .build();
     }
+
+    public static <T> GenericResponseDTO<T> buildResponse(String message,  HttpStatus status) {
+       return buildResponse(message,null,status);
+    }
+
 
     public static void write(HttpServletResponse response, Object body, int status) throws IOException {
         write(response, body, status, null);
