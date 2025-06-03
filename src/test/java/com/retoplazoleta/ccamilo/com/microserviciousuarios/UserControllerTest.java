@@ -3,8 +3,8 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.controller.UserController;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.GenericRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.GenericResponseDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.UserRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.CREATE_USER_SUCCES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,16 +39,9 @@ class UserControllerTest {
     @Test
     void createUser_debeRetornarResponseEntityConStatusCreated() {
 
-        GenericRequest request = new GenericRequest();
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put("nombre", "Carlos");
-        userMap.put("apellido", "Pérez");
-        userMap.put("numeroDocumento", "123456789");
-        userMap.put("correo", "carlos@mail.com");
-        userMap.put("celular", "+573001112233");
-        userMap.put("fechaNacimiento", "01/01/2000");
-        userMap.put("clave", "clave123");
-        request.setRequest(userMap);
+        UserRequest request = new UserRequest();
+
+
 
         UserDTO userDTO = new UserDTO();
         userDTO.setNombre("Carlos");
@@ -60,13 +51,14 @@ class UserControllerTest {
         userDTO.setCelular("+573001112233");
         userDTO.setFechaNacimiento("01/01/2000");
         userDTO.setClave("clave123");
+        request.setRequest(userDTO);
 
         AuthenticatedUser authenticatedUser = new AuthenticatedUser(
                 "1", "carlos@mail.com", null,
                 List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
 
-        when(modelMapper.map(eq(request), eq(UserDTO.class))).thenReturn(userDTO);
+        //when(modelMapper.map(eq(request), eq(UserDTO.class))).thenReturn(userDTO);
 
 
         ResponseEntity<GenericResponseDTO<Void>> response = userController.createUser(request, authenticatedUser);

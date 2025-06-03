@@ -22,3 +22,6 @@ spring:
 
 server:
   port: 8080
+
+appDescripcion: API para crear restaurante a propietarios a partir de un rol administrador
+appVersion: 1.0.0

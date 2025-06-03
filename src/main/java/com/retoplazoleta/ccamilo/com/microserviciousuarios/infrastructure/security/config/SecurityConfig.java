@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     private static final String[] WHITE_LIST_URL = {
-           BASE_URL + "/**"
+           BASE_URL + "/**", "/swagger-ui/**", "/v3/api-docs/**"
     };
 
 
