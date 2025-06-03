@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: microservicio-usuarios
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/USUARIOS
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+appDescripcion: API para crear restaurante a propietarios a partir de un rol administrador
+appVersion: 1.0.0
