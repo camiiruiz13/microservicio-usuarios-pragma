@@ -2,7 +2,8 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.secur
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.GenericResponseDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.TokenJwtConfig;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import io.jsonwebtoken.Claims;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
 
     private final AuthenticationManager authenticationManager;
 
+
     private final String AUTHORITHIES ="authorities";
     private final String USERNAME = "username";
     private final String TOKEN = "token";
@@ -49,14 +52,14 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
 
     public GenericResponseDTO generateTokenResponse(Authentication authResult) throws IOException {
 
-        org.springframework.security.core.userdetails.User user =
-                (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
+        AuthenticatedUser user = (AuthenticatedUser) authResult.getPrincipal();
         String username = user.getUsername();
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
+
         Claims claims = Jwts.claims()
                 .add(AUTHORITHIES, new ObjectMapper().writeValueAsString(roles))
-                .add(USERNAME , username)
+                .add(USERNAME, username)
                 .build();
 
         String token = Jwts.builder()
@@ -71,7 +74,7 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
         body.put(TOKEN, token);
         body.put(USERNAME, username);
 
-        return ResponseUtils.buildResponse(SESSION_SUCCES.getMessage() + username, body, HttpStatus.OK);
+        return ResponseUtils.buildResponse(SESSION_SUCCES.getMessage() +  username, body, HttpStatus.OK);
 
 
     }
@@ -81,6 +84,9 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
             throws AuthenticationException {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+          String password =  new BCryptPasswordEncoder().encode("12345");
+
+
             return authenticateUser(user);
         } catch (IOException e) {
             throw new RuntimeException(ERROR_CREDENCIALES.getMessage(), e);

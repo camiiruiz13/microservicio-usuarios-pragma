@@ -1,69 +1,62 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.controller;
 
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.LoginDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.UserRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.BASE_URL;
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.CREATE_USER;
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.CREATE_USER_SUCCES;
-
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.*;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.SwaggerConstants.*;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.TokenJwtConfig.CONTENT_TYPE;
 
-@Tag(name = TAG_NAME, description = TAG_DESCRIPTION)
+@Tag(name = TAG_NAME_LOGIN, description = TAG_DESCRIPTION_LOGIN)
 @RestController
-@RequestMapping(BASE_URL)
 @RequiredArgsConstructor
-public class UserController {
+public class LoginController {
 
     private final IUserHandler userHandler;
 
 
-    @Operation(summary = CREATE_USER_SUMMARY, description = CREATE_USER_DESCRIPTION)
+    @Operation(summary = LOGIN_SUMMARY, description = LOGIN_DESCRIPTION, security = @SecurityRequirement(name = ""))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = HTTP_201, description = RESPONSE_201,
+            @ApiResponse(responseCode = HTTP_200, description = RESPONSE_200,
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
             @ApiResponse(responseCode = HTTP_400, description = RESPONSE_400,
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
-            @ApiResponse(responseCode = HTTP_409, description = RESPONSE_409,
+            @ApiResponse(responseCode = HTTP_401, description = RESPONSE_401,
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
             @ApiResponse(responseCode = HTTP_500, description = RESPONSE_500,
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class)))
     })
-    @PostMapping(CREATE_USER)
-    @PreAuthorize("hasRole('ADMIN')")
+
+    @PostMapping(LOGIN)
     public ResponseEntity<GenericResponseDTO<Void>> createUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = CREATE_USER_DESCRIPTION_REQUEST,
                     content = @Content(
                             mediaType = CONTENT_TYPE,
-                            schema = @Schema(implementation = UserRequest.class)
+                            schema = @Schema(implementation = LoginDTO.class)
                     )
             )
-            @RequestBody UserRequest request,
-            @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+            @RequestBody LoginDTO request) {
 
-        UserDTO userDTO =request.getRequest();
-        userHandler.crearUserPropietario(userDTO, authenticatedUser.getRol());
+
+        GenericResponseDTO responseDTO = userHandler.login(request);
         return new ResponseEntity<>(
-                ResponseUtils.buildResponse(CREATE_USER_SUCCES.getMessage(), HttpStatus.CREATED),
-                HttpStatus.CREATED
+                responseDTO,
+                HttpStatus.OK
         );
     }
 }
