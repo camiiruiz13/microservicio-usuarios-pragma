@@ -2,7 +2,8 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.GenericResponseDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.auth.AuthenticationFilter;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import jakarta.servlet.FilterChain;
@@ -23,8 +24,6 @@ import org.springframework.mock.web.DelegatingServletInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -75,18 +74,14 @@ class AuthenticationFilterTest {
     @Test
     @Order(2)
     void generateTokenResponse_debeRetornarGenericResponseDTO() throws Exception {
-
         Collection<? extends GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
 
-        UserDetails springUser = new org.springframework.security.core.userdetails.User(
-                "user@example.com", "password", authorities
-        );
+        AuthenticatedUser authenticatedUser = new AuthenticatedUser("1", "user@example.com", "user@example.com", authorities);
 
-        when(authentication.getPrincipal()).thenReturn(springUser);
+        when(authentication.getPrincipal()).thenReturn(authenticatedUser);
         doReturn(authorities).when(authentication).getAuthorities();
 
         GenericResponseDTO<?> dto = authenticationFilter.generateTokenResponse(authentication);
-
 
         assertEquals(200, dto.getStatusCode());
 
@@ -95,6 +90,7 @@ class AuthenticationFilterTest {
         assertNotNull(body.get("token"));
         assertTrue(((String) body.get("token")).contains("."));
     }
+
 
     @Test
     @Order(3)

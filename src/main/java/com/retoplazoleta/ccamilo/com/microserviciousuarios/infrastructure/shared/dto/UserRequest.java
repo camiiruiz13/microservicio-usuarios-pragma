@@ -1,4 +1,4 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
 import lombok.Getter;

@@ -1,7 +1,8 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exceptionhandler;
 
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.exception.TokenInvalidException;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserDomainException;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.GenericResponseDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,13 @@ public class ControllerAdvisor {
     public ResponseEntity<GenericResponseDTO<Void>> handleGenericException(Exception ex) {
         return new ResponseEntity<>(ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(TokenInvalidException.class)
+    public ResponseEntity<GenericResponseDTO<Void>> handleTokenInvalidException(TokenInvalidException ex) {
+        return new ResponseEntity<>(
+                ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
 }

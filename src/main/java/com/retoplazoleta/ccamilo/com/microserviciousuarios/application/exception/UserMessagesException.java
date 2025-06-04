@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum UserMessagesException {
 
     DATE_TIME_FORMATER("dd/MM/yyyy"),
-    ILEGAL_FROMATER("La fecha debe tener el formato dd/MM/yyyy");
+    ILEGAL_FROMATER("La fecha debe tener el formato dd/MM/yyyy"),
+    TOKEN_INVALID("Error al generar el token ");
 
     private final String message;
 }

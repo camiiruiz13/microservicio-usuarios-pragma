@@ -1,7 +1,8 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.RoleCode;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exception.AutenticationException;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.adapter.UserJpaAdapter;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.RoleEntity;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.UserEntity;
@@ -18,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.RoleCode.PROPIETARIO;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.ERROR_CREDENCIALES;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +46,7 @@ class UserJpaAdapterTest {
 
     @Test
     @Order(1)
-    void saveUser_conRolAdmin_asignaPropietario() {
+    void saveUser_debeGuardarUsuarioConClaveEncriptada() {
         User user = new User();
         user.setId(1L);
         user.setNombre("Test");
@@ -58,21 +59,23 @@ class UserJpaAdapterTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setClave("123456");
 
-        RoleEntity rolPropietario = new RoleEntity(2L, RoleCode.PROPIETARIO.name(), "rol propietario");
-        userEntity.setRol(rolPropietario);
+        String claveEncriptada = "$2a$10$abc123"; // ejemplo
 
         when(userEntityMapper.toUserEntity(user)).thenReturn(userEntity);
-        when(roleRepository.findByNombre(String.valueOf(PROPIETARIO))).thenReturn(rolPropietario);
-        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+        when(passwordEncoder.encode("123456")).thenReturn(claveEncriptada);
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
         when(userEntityMapper.toUserModel(userEntity)).thenReturn(user);
 
-        User result = userJpaAdapter.saveUser(user, String.valueOf(RoleCode.ADMIN));
+        User result = userJpaAdapter.saveUser(user);
 
         assertNotNull(result);
         verify(userEntityMapper).toUserEntity(user);
-        verify(roleRepository).findByNombre(String.valueOf(PROPIETARIO));
+        verify(passwordEncoder).encode("123456");
         verify(userRepository).save(userEntity);
+        verify(userEntityMapper).toUserModel(userEntity);
+        assertEquals(claveEncriptada, userEntity.getClave());
     }
+
 
 
     @Test
@@ -138,6 +141,67 @@ class UserJpaAdapterTest {
         assertNull(result);
     }
 
+    @Test
+    @Order(6)
+    void getRoleByNombre_existente_retornaRole() {
+        String nombre = "PROPIETARIO";
+        RoleEntity roleEntity = new RoleEntity(1L, nombre, "desc");
+        Role expectedRole = new Role(1L, nombre, "desc");
+
+        when(roleRepository.findByNombre(nombre)).thenReturn(Optional.of(roleEntity));
+        when(userEntityMapper.toRoleModel(roleEntity)).thenReturn(expectedRole);
+
+        Role result = userJpaAdapter.getRoleByNombre(nombre);
+
+        assertNotNull(result);
+        assertEquals(nombre, result.getNombre());
+        verify(roleRepository).findByNombre(nombre);
+        verify(userEntityMapper).toRoleModel(roleEntity);
+    }
+
+    @Test
+    @Order(7)
+    void getRoleByNombre_noExistente_retornaNull() {
+        String nombre = "ROL_INEXISTENTE";
+        when(roleRepository.findByNombre(nombre)).thenReturn(Optional.empty());
+
+        Role result = userJpaAdapter.getRoleByNombre(nombre);
+
+        assertNull(result);
+        verify(roleRepository).findByNombre(nombre);
+        verifyNoInteractions(userEntityMapper);
+    }
+
+
+    @Test
+    @Order(8)
+    void esClaveValida_claveCorrecta_retornaTrue() {
+        String claveIngresada = "12345";
+        String claveBD = "$2a$10$abc123";
+
+        when(passwordEncoder.matches(claveIngresada, claveBD)).thenReturn(true);
+
+        boolean resultado = userJpaAdapter.esClaveValida(claveIngresada, claveBD);
+
+        assertTrue(resultado);
+        verify(passwordEncoder).matches(claveIngresada, claveBD);
+    }
+
+
+    @Test
+    @Order(9)
+    void esClaveValida_claveIncorrecta_lanzaExcepcion() {
+        String claveIngresada = "12345";
+        String claveBD = "$2a$10$abc123";
+
+        when(passwordEncoder.matches(claveIngresada, claveBD)).thenReturn(false);
+
+        AutenticationException exception = assertThrows(AutenticationException.class, () ->
+                userJpaAdapter.esClaveValida(claveIngresada, claveBD));
+
+        assertEquals(ERROR_CREDENCIALES.getMessage(), exception.getMessage());
+        verify(passwordEncoder).matches(claveIngresada, claveBD);
+    }
 
 
 

@@ -3,15 +3,14 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.controller.UserController;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.GenericResponseDTO;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.UserRequest;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.UserRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,8 +29,7 @@ class UserControllerTest {
     @Mock
     private IUserHandler userHandler;
 
-    @Mock
-    private ModelMapper modelMapper;
+
 
     @InjectMocks
     private UserController userController;

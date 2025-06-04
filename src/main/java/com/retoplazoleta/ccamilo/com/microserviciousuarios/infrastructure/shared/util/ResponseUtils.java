@@ -1,7 +1,7 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto.GenericResponseDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 
