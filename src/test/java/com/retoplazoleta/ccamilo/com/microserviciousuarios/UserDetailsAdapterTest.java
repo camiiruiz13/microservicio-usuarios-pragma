@@ -40,6 +40,7 @@ class UserDetailsAdapterTest {
         user.setId(userId);
         user.setCorreo(username);
         user.setRol(rol);
+        user.setClave("clave123");
 
         when(userPersistencePort.getUsuarioByCorreo(username)).thenReturn(user);
 
@@ -50,10 +51,9 @@ class UserDetailsAdapterTest {
 
         AuthenticatedUser authenticatedUser = (AuthenticatedUser) userDetails;
 
-
         assertEquals(userId.toString(), authenticatedUser.getIdUser());
         assertEquals(username, authenticatedUser.getUsername());
-        assertEquals(username, authenticatedUser.getPassword());
+        assertEquals("clave123", authenticatedUser.getPassword()); // ← CORRECCIÓN
 
         assertEquals(1, authenticatedUser.getAuthorities().size());
         assertTrue(authenticatedUser.getAuthorities().stream()
@@ -61,4 +61,5 @@ class UserDetailsAdapterTest {
 
         verify(userPersistencePort).getUsuarioByCorreo(username);
     }
+
 }

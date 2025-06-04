@@ -2,6 +2,7 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exception.AutenticationException;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.adapter.UserJpaAdapter;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.RoleEntity;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.UserEntity;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.ERROR_CREDENCIALES;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -171,7 +173,35 @@ class UserJpaAdapterTest {
     }
 
 
+    @Test
+    @Order(8)
+    void esClaveValida_claveCorrecta_retornaTrue() {
+        String claveIngresada = "12345";
+        String claveBD = "$2a$10$abc123";
 
+        when(passwordEncoder.matches(claveIngresada, claveBD)).thenReturn(true);
+
+        boolean resultado = userJpaAdapter.esClaveValida(claveIngresada, claveBD);
+
+        assertTrue(resultado);
+        verify(passwordEncoder).matches(claveIngresada, claveBD);
+    }
+
+
+    @Test
+    @Order(9)
+    void esClaveValida_claveIncorrecta_lanzaExcepcion() {
+        String claveIngresada = "12345";
+        String claveBD = "$2a$10$abc123";
+
+        when(passwordEncoder.matches(claveIngresada, claveBD)).thenReturn(false);
+
+        AutenticationException exception = assertThrows(AutenticationException.class, () ->
+                userJpaAdapter.esClaveValida(claveIngresada, claveBD));
+
+        assertEquals(ERROR_CREDENCIALES.getMessage(), exception.getMessage());
+        verify(passwordEncoder).matches(claveIngresada, claveBD);
+    }
 
 
 

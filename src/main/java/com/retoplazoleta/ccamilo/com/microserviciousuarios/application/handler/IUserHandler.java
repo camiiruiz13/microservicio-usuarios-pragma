@@ -6,5 +6,5 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared
 
 public interface IUserHandler {
     void crearUserPropietario(UserDTO userDTO, String role);
-    GenericResponseDTO login(LoginDTO loginDTO);
+    GenericResponseDTO<?> login(LoginDTO loginDTO);
 }

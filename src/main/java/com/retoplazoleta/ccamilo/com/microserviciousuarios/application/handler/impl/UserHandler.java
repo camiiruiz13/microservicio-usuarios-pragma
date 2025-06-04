@@ -33,7 +33,7 @@ public class UserHandler implements IUserHandler {
     }
 
     @Override
-    public GenericResponseDTO login(LoginDTO loginDTO) {
+    public GenericResponseDTO<?> login(LoginDTO loginDTO) {
         AuthenticationFilter jwtAuthenticationFilter = new AuthenticationFilter(authenticationManager);
         UserDTO userDTO = new UserDTO();
         userDTO.setCorreo(loginDTO.getCorreo());
