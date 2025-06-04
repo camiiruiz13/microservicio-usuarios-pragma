@@ -1,12 +1,14 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.controller;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.response.UserDTOResponse;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.UserRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,8 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.BASE_URL;
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.CREATE_USER;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.*;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.CREATE_USER_SUCCES;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.SwaggerConstants.*;
@@ -67,7 +68,7 @@ public class UserController {
         );
     }
 
-    @Operation(summary = CREATE_USER_SUMMARY, description = CREATE_USER_DESCRIPTION)
+    @Operation(summary = FIND_USER_SUMMARY, description = FIND_USER_SUMMARY)
     @ApiResponses(value = {
             @ApiResponse(responseCode = HTTP_200, description = RESPONSE_200,
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
@@ -78,17 +79,11 @@ public class UserController {
             @ApiResponse(responseCode = HTTP_500, description = RESPONSE_500,
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class)))
     })
-    @GetMapping(CREATE_USER)
-    public ResponseEntity<GenericResponseDTO<Void>> createUser(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = CREATE_USER_DESCRIPTION_REQUEST,
-                    content = @Content(
-                            mediaType = CONTENT_TYPE,
-                            schema = @Schema(implementation = UserRequest.class)
-                    )
-            )
-            @RequestBody UserRequest request,
-            @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+    @GetMapping(FIND_BY_CORREO)
+    public ResponseEntity<GenericResponseDTO<UserDTOResponse>> findByCorreo(
+            @PathVariable("correo")
+            @Parameter(description = , required = true)
+            String correo){
 
         UserDTO userDTO =request.getRequest();
         userHandler.crearUserPropietario(userDTO, authenticatedUser.getRol());

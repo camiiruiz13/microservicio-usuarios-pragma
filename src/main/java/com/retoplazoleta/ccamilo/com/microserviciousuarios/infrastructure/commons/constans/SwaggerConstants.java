@@ -11,9 +11,10 @@ public class SwaggerConstants {
     public static final String TAG_DESCRIPTION_LOGIN = "Operacion para inicio de sesón";
 
     public static final String CREATE_USER_SUMMARY = "Crear un usuario dependiendo con los roles";
-    public static final String CREATE_USER_SUMMARY = "Busca el usuario por correo;
+    public static final String FIND_USER_SUMMARY = "Busca el usuario por correo";
     public static final String LOGIN_SUMMARY = "Inicia sesion";
     public static final String CREATE_USER_DESCRIPTION = "Permite al rol correspondiente registrar un nuevo usuario segun sus criterios";
+    public static final String FIND_USER_DESCRIPTION = "Filtra los usuarios por el correo correspondiente";
     public static final String LOGIN_DESCRIPTION = "Permite al usuario iniciar sesion";
     public static final String CREATE_USER_DESCRIPTION_REQUEST = "Estructura esperada para el campo `request`";
 
