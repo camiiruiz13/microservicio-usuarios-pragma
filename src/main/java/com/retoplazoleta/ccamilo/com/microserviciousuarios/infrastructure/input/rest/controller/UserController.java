@@ -82,11 +82,11 @@ public class UserController {
     @GetMapping(FIND_BY_CORREO)
     public ResponseEntity<GenericResponseDTO<UserDTOResponse>> findByCorreo(
             @PathVariable("correo")
-            @Parameter(description = , required = true)
+            @Parameter(description = FIND_BY_CORREO, required = true)
             String correo){
 
-        UserDTO userDTO =request.getRequest();
-        userHandler.crearUserPropietario(userDTO, authenticatedUser.getRol());
+        UserDTOResponse userDTO = userHandler.findByCorreo(correo);
+
         return new ResponseEntity<>(
                 ResponseUtils.buildResponse(CREATE_USER_SUCCES.getMessage(), HttpStatus.CREATED),
                 HttpStatus.CREATED
