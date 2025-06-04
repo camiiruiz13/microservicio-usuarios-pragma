@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.*;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.CREATE_USER_SUCCES;
 
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.FIND_USER_SUCCES;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.SwaggerConstants.*;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.TokenJwtConfig.CONTENT_TYPE;
 
@@ -88,7 +89,7 @@ public class UserController {
         UserDTOResponse userDTO = userHandler.findByCorreo(correo);
 
         return new ResponseEntity<>(
-                ResponseUtils.buildResponse(CREATE_USER_SUCCES.getMessage(), HttpStatus.CREATED),
+                ResponseUtils.buildResponse(FIND_USER_SUCCES.getMessage(), userDTO, HttpStatus.OK),
                 HttpStatus.CREATED
         );
     }

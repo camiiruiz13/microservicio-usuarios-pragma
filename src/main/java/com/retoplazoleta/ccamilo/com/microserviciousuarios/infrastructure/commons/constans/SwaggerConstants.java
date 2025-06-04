@@ -17,7 +17,7 @@ public class SwaggerConstants {
     public static final String FIND_USER_DESCRIPTION = "Filtra los usuarios por el correo correspondiente";
     public static final String LOGIN_DESCRIPTION = "Permite al usuario iniciar sesion";
     public static final String CREATE_USER_DESCRIPTION_REQUEST = "Estructura esperada para el campo `request`";
-    public static final String  = "Valor a filtrar por corrEo";
+
 
     public static final String RESPONSE_200 = "Inicio de sesion exitoso";
     public static final String RESPONSE_201 = "Usuario Creado correctamente";
