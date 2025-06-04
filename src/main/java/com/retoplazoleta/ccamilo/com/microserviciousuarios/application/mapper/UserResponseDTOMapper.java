@@ -22,7 +22,6 @@ import static com.retoplazoleta.ccamilo.com.microserviciousuarios.application.ex
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface UserResponseDTOMapper {
 
-
     @Mapping(source = "id", target = "idUsuario")
     @Mapping(source = "fechaNacimiento", target = "fechaNacimiento", qualifiedByName = "localDateToString")
     UserDTOResponse toDto(User user);
@@ -40,5 +39,13 @@ public interface UserResponseDTOMapper {
         }
     }
 
-
+    @Named("localDateToString")
+    static String localDateToString(LocalDate date) {
+        if (date == null) return null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMATER.getMessage());
+        return date.format(formatter);
+    }
 }
+
+
+
