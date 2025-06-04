@@ -28,10 +28,16 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public User login(String correo, String clave) {
         loginField(correo, clave);
+        User user = findByCorreo(correo);
+        userPersistencePort.esClaveValida(clave, user.getClave());
+        return user;
+    }
+
+    @Override
+    public User findByCorreo(String correo) {
         User user = userPersistencePort.getUsuarioByCorreo(correo);
         if (user == null)
             throw new UserDomainException(UserValidationMessage.NO_DATA_FOUND.getMensaje());
-        userPersistencePort.esClaveValida(clave, user.getClave());
         return user;
     }
 

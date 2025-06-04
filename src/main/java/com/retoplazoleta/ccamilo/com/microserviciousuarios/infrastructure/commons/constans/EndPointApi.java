@@ -5,5 +5,6 @@ public interface EndPointApi {
     String BASE_URL = "/api/users";
     String CREATE_USER = "/createUser";
     String LOGIN = "/login";
+    String FIND_BY_CORREO = "/buscarPorCorreo/{correo}";
 
 }

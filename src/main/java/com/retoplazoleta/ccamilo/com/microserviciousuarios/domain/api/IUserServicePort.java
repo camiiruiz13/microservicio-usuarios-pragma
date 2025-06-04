@@ -6,5 +6,6 @@ public interface IUserServicePort {
 
     void crearUserPropietario(User user, String role);
     User login(String correo, String clave);
+    User findByCorreo(String correo);
 
 }

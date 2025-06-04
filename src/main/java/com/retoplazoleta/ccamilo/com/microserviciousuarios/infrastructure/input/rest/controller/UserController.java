@@ -66,6 +66,37 @@ public class UserController {
                 HttpStatus.CREATED
         );
     }
+
+    @Operation(summary = CREATE_USER_SUMMARY, description = CREATE_USER_DESCRIPTION)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = HTTP_200, description = RESPONSE_200,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
+            @ApiResponse(responseCode = HTTP_400, description = RESPONSE_400,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
+            @ApiResponse(responseCode = HTTP_409, description = RESPONSE_409,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
+            @ApiResponse(responseCode = HTTP_500, description = RESPONSE_500,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class)))
+    })
+    @GetMapping(CREATE_USER)
+    public ResponseEntity<GenericResponseDTO<Void>> createUser(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = CREATE_USER_DESCRIPTION_REQUEST,
+                    content = @Content(
+                            mediaType = CONTENT_TYPE,
+                            schema = @Schema(implementation = UserRequest.class)
+                    )
+            )
+            @RequestBody UserRequest request,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+
+        UserDTO userDTO =request.getRequest();
+        userHandler.crearUserPropietario(userDTO, authenticatedUser.getRol());
+        return new ResponseEntity<>(
+                ResponseUtils.buildResponse(CREATE_USER_SUCCES.getMessage(), HttpStatus.CREATED),
+                HttpStatus.CREATED
+        );
+    }
 }
 
 
