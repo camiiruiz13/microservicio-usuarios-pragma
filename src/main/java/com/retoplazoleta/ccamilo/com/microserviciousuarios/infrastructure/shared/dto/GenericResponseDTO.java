@@ -1,4 +1,4 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.dto;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -13,13 +13,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GenericResponseDTO<T>
-
-        implements Serializable {
+public class GenericResponseDTO<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public String message;
-    private T objectResponse;
-    public int statusCode;
 
+    private String message;
+    private T objectResponse;
+    private int statusCode;
 }

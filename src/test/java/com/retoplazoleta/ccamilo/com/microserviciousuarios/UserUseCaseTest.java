@@ -6,7 +6,7 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.User
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.usecase.UserUseCase;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.RoleCode;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class UserUseCaseTest {
 
         assertDoesNotThrow(() -> userUseCase.crearUserPropietario(user, String.valueOf(RoleCode.ADMIN)));
 
-        verify(userPersistencePort).saveUser(user, String.valueOf(RoleCode.ADMIN));
+        verify(userPersistencePort).saveUser(user);
     }
 
     @Test
@@ -160,6 +160,15 @@ class UserUseCaseTest {
         User user = buildValidUser();
         user.setFechaNacimiento(LocalDate.now().minusYears(17));
         assertThrowsConMensaje(UserValidationMessage.NO_MAYOR_DE_EDAD.getMensaje(), () ->
+                userUseCase.crearUserPropietario(user, String.valueOf(RoleCode.ADMIN)));
+    }
+
+    @Test
+    @Order(14)
+    void clave_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setClave("");
+        assertThrowsConMensaje(UserValidationMessage.CLAVE.getMensaje(), () ->
                 userUseCase.crearUserPropietario(user, String.valueOf(RoleCode.ADMIN)));
     }
 

@@ -30,7 +30,7 @@ public class UserDetailsAdapter implements UserDetailsService {
                 new SimpleGrantedAuthority("ROLE_" + findByCorreo.getRol().getNombre())
         );
 
-        return new AuthenticatedUser(findByCorreo.getId().toString(), findByCorreo.getCorreo(), findByCorreo.getCorreo(), authorities);
+        return new AuthenticatedUser(findByCorreo.getId().toString(), findByCorreo.getCorreo(), findByCorreo.getClave(), authorities);
 
 
     }

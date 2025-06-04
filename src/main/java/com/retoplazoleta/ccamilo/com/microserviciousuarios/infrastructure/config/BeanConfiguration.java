@@ -33,8 +33,5 @@ public class BeanConfiguration {
         return new UserUseCase(userPersistencePort());
     }
 
-    @Bean
-    ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
+
 }

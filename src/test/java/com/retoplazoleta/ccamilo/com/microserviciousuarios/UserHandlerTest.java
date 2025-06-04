@@ -5,7 +5,7 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.i
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.mapper.UserRequestDTOMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.api.IUserServicePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.RoleCode;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +31,6 @@ class UserHandlerTest {
     void crearUserPropietario_debeLlamarAlUseCaseConUsuarioMapeado() {
 
         UserDTO userDTO = new UserDTO();
-        userDTO.setIdUser(1L);
         userDTO.setNombre("Juan");
         userDTO.setApellido("Perez");
         userDTO.setNumeroDocumento("123456");

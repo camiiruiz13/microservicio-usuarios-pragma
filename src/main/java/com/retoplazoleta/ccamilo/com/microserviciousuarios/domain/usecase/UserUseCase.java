@@ -3,16 +3,14 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.usecase;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.api.IUserServicePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserDomainException;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserValidationMessage;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.regex.Pattern;
-
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserValidationMessage.NUMERODOC_REGISTRADO;
 
 
 @RequiredArgsConstructor
@@ -23,8 +21,18 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public void crearUserPropietario(User user, String role) {
         validateUserFields(user);
-        userPersistencePort.saveUser(user, role);
+        user.setRol(getRoleByNombre(role));
+        userPersistencePort.saveUser(user);
+    }
 
+    @Override
+    public User login(String correo, String clave) {
+        loginField(correo, clave);
+        User user = userPersistencePort.getUsuarioByCorreo(correo);
+        if (user == null)
+            throw new UserDomainException(UserValidationMessage.NO_DATA_FOUND.getMensaje());
+        userPersistencePort.esClaveValida(clave, user.getClave());
+        return user;
     }
 
     private void validateUserFields(User user) {
@@ -46,7 +54,7 @@ public class UserUseCase implements IUserServicePort {
         }
 
         if (userPersistencePort.getUsuarioByNumeroDocumento(user.getNumeroDocumento()) != null) {
-            throw new UserDomainException(NUMERODOC_REGISTRADO.getMensaje());
+            throw new UserDomainException(UserValidationMessage.NUMERODOC_REGISTRADO.getMensaje());
         }
 
         if (isNullOrEmpty(user.getCelular())) {
@@ -61,6 +69,11 @@ public class UserUseCase implements IUserServicePort {
             throw new UserDomainException(UserValidationMessage.CORREO_OBLIGATORIO.getMensaje());
         }
 
+
+        if (isNullOrEmpty(user.getClave())) {
+            throw new UserDomainException(UserValidationMessage.CLAVE.getMensaje());
+        }
+
         if (userPersistencePort.getUsuarioByCorreo(user.getCorreo()) != null) {
             throw new UserDomainException(UserValidationMessage.CORREO_REGISTRADO.getMensaje());
         }
@@ -68,7 +81,6 @@ public class UserUseCase implements IUserServicePort {
         if (!isValidEmail(user.getCorreo())) {
             throw new UserDomainException(UserValidationMessage.CORREO_INVALIDO.getMensaje());
         }
-
 
         if (user.getFechaNacimiento() == null) {
             throw new UserDomainException(UserValidationMessage.FECHA_NACIMIENTO_OBLIGATORIA.getMensaje());
@@ -79,20 +91,23 @@ public class UserUseCase implements IUserServicePort {
         }
     }
 
-    private Boolean isNullOrEmpty(String str) {
+
+    private boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
 
-    private Boolean isValidEmail(String email) {
+    private boolean isValidEmail(String email) {
         String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return Pattern.matches(regex, email);
     }
 
-    private Boolean isValidPhone(String phone) {
-        String regex = "^\\+?[0-9]{1,13}$";
+    private boolean isValidPhone(String phone) {
+        String regex = "^\\+?\\d{1,13}$";
         return Pattern.matches(regex, phone);
     }
-    private Boolean isNumeric(String str) {
+
+
+    private boolean isNumeric(String str) {
         return str.matches("\\d+");
     }
 
@@ -101,5 +116,39 @@ public class UserUseCase implements IUserServicePort {
         return fechaNacimiento.plusYears(18).isBefore(today) || fechaNacimiento.plusYears(18).isEqual(today);
     }
 
+    private Role getRoleByNombre(String rol) {
+        if (rol == null || rol.trim().isEmpty()) {
+            return userPersistencePort.getRoleByNombre(RoleCode.CLIENTE.name());
+        } else if (rol.equals(RoleCode.ADMIN.name())) {
+            return userPersistencePort.getRoleByNombre(RoleCode.PROPIETARIO.name());
+        } else if (rol.equals(RoleCode.PROPIETARIO.name())) {
+            return userPersistencePort.getRoleByNombre(RoleCode.EMPLEADO.name());
+        }
+
+        throw new UserDomainException(UserValidationMessage.ROLE_INVALIDO.getMensaje());
+    }
+
+    private Role getRoleByNombre() {
+        return getRoleByNombre(null);
+    }
+
+    private void loginField(String correo, String clave) {
+
+
+        if (isNullOrEmpty(correo)) {
+            throw new UserDomainException(UserValidationMessage.CORREO_OBLIGATORIO.getMensaje());
+        }
+
+        if (!isValidEmail(correo)) {
+            throw new UserDomainException(UserValidationMessage.CORREO_INVALIDO.getMensaje());
+        }
+
+
+        if (isNullOrEmpty(clave)) {
+            throw new UserDomainException(UserValidationMessage.CLAVE.getMensaje());
+        }
+
+
+    }
 
 }

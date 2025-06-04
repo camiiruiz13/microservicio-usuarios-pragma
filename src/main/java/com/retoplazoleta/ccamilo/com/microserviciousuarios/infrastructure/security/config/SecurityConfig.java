@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.BASE_URL;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.EndPointApi.LOGIN;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,8 +28,16 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
+
     private static final String[] WHITE_LIST_URL = {
-           BASE_URL + "/**", "/swagger-ui/**", "/v3/api-docs/**"
+            LOGIN,
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/webjars/**",
+            "/configuration/**",
+            BASE_URL + "/**"
     };
 
 
@@ -45,11 +54,12 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, IUserPersistencePort userPersistencePort) throws Exception {
-        return http.authorizeHttpRequests( (authz) -> authz
+
+        return http.authorizeHttpRequests((authz) -> authz
                         .requestMatchers(WHITE_LIST_URL).permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .exceptionHandling(ex-> ex.accessDeniedHandler(customAccessDeniedHandler)
+                .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler)
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .addFilter(new AuthenticationFilter(authenticationManager()))
                 .addFilter(new ValidationFilter(authenticationManager(), userPersistencePort))
