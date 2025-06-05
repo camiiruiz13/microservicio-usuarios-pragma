@@ -1,7 +1,7 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.LoginDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.auth.AuthenticationFilter;
@@ -19,7 +19,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.mock.web.DelegatingServletInputStream;
 
 import java.io.ByteArrayInputStream;
@@ -56,7 +55,7 @@ class AuthenticationFilterTest {
     @Test
     @Order(1)
     void authenticateUser_debeAutenticarCorrectamente() {
-        User user = new User();
+        LoginDTO user = new LoginDTO();
         user.setCorreo("test@correo.com");
         user.setClave("clave123");
 
@@ -73,22 +72,18 @@ class AuthenticationFilterTest {
 
     @Test
     @Order(2)
-    void generateTokenResponse_debeRetornarGenericResponseDTO() throws Exception {
+    void generateTokenResponse_debeRetornarTokenYUsername() throws Exception {
         Collection<? extends GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
 
         AuthenticatedUser authenticatedUser = new AuthenticatedUser("1", "user@example.com", "user@example.com", authorities);
 
         when(authentication.getPrincipal()).thenReturn(authenticatedUser);
-        doReturn(authorities).when(authentication).getAuthorities();
 
-        GenericResponseDTO<?> dto = authenticationFilter.generateTokenResponse(authentication);
+        Map<String, Object> result = authenticationFilter.generateTokenResponse(authentication);
 
-        assertEquals(200, dto.getStatusCode());
-
-        Map<?, ?> body = (Map<?, ?>) dto.getObjectResponse();
-        assertEquals("user@example.com", body.get("username"));
-        assertNotNull(body.get("token"));
-        assertTrue(((String) body.get("token")).contains("."));
+        assertEquals("user@example.com", result.get("username"));
+        assertNotNull(result.get("token"));
+        assertTrue(((String) result.get("token")).contains(".")); // verifica que tiene formato JWT
     }
 
 
@@ -96,7 +91,7 @@ class AuthenticationFilterTest {
     @Order(3)
     void attemptAuthentication_debeLeerYAutenticarUsuario() throws Exception {
 
-        User user = new User();
+        LoginDTO user = new LoginDTO();
         user.setCorreo("correo@correo.com");
         user.setClave("123");
 
@@ -134,25 +129,22 @@ class AuthenticationFilterTest {
     @Order(5)
     void successfulAuthentication_escribeTokenEnRespuesta() throws Exception {
         Collection<? extends GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                "test@correo.com", "clave", authorities
+
+        AuthenticatedUser authenticatedUser = new AuthenticatedUser("1", "test@correo.com", "test@correo.com", authorities);
+        when(authentication.getPrincipal()).thenReturn(authenticatedUser);
+
+        Map<String, Object> mockMap = Map.of(
+                "token", "mock-token",
+                "username", "test@correo.com"
         );
 
-
-        GenericResponseDTO<?> mockResponse = GenericResponseDTO.builder()
-                .statusCode(200)
-                .message("OK")
-                .objectResponse(Map.of("token", "mock-token", "username", "test@correo.com"))
-                .build();
-
         AuthenticationFilter spyFilter = spy(authenticationFilter);
-
-        doReturn(mockResponse).when(spyFilter)
-                .generateTokenResponse(authentication);
+        doReturn(mockMap).when(spyFilter).generateTokenResponse(authentication);
 
         try (MockedStatic<ResponseUtils> utilsMock = mockStatic(ResponseUtils.class)) {
             utilsMock.when(() -> ResponseUtils.write(any(), any(), anyInt(), anyString()))
                     .thenAnswer(invocation -> null);
+
 
             TestUtil.invokePrivateMethod(
                     spyFilter,
@@ -166,9 +158,11 @@ class AuthenticationFilterTest {
                     eq(response),
                     any(GenericResponseDTO.class),
                     eq(200),
-                    startsWith("Bearer ")
+                    eq("Bearer mock-token")
             ));
         }
     }
+
+
 
 }

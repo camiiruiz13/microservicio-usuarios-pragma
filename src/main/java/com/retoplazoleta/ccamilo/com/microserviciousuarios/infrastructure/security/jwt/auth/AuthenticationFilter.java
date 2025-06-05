@@ -1,7 +1,9 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.LoginDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exception.AutenticationException;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.TokenJwtConfig;
@@ -19,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -44,14 +45,14 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
 
 
 
-    public Authentication authenticateUser(User user) throws AuthenticationException {
+    public Authentication authenticateUser(LoginDTO user) throws AuthenticationException {
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(user.getCorreo(), user.getClave());
         return authenticationManager.authenticate(authenticationToken);
     }
 
-    public GenericResponseDTO<Map<String, Object>> generateTokenResponse(Authentication authResult) throws IOException {
+    public Map<String, Object>  generateTokenResponse(Authentication authResult) throws IOException {
 
         AuthenticatedUser user = (AuthenticatedUser) authResult.getPrincipal();
         String username = user.getUsername();
@@ -74,8 +75,7 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
         Map<String, Object> body = new HashMap<>();
         body.put(TOKEN, token);
         body.put(USERNAME, username);
-
-        return ResponseUtils.buildResponse(SESSION_SUCCES.getMessage() +  username, body, HttpStatus.OK);
+        return body;
 
 
     }
@@ -84,21 +84,22 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         try {
-            User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-
-
+            LoginDTO user = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
             return authenticateUser(user);
         } catch (IOException e) {
-            throw new RuntimeException(ERROR_CREDENCIALES.getMessage(), e);
+            throw new AutenticationException(ERROR_CREDENCIALES.getMessage(), e);
         }
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        GenericResponseDTO<Map<String, Object>> genericResponseDTO = generateTokenResponse(authResult);
+        Map<String, Object> body = generateTokenResponse(authResult);
+        String token = TokenJwtConfig.PREFIX_TOKEN + body.get(TOKEN).toString();
+        String username =  body.get(USERNAME).toString();
 
-        String token = TokenJwtConfig.PREFIX_TOKEN + ((Map<String, Object>) genericResponseDTO.getObjectResponse()).get("token").toString();
+        GenericResponseDTO<Map<String, Object>> genericResponseDTO =
+                ResponseUtils.buildResponse(SESSION_SUCCES.getMessage() + username, body, HttpStatus.OK);
 
 
         ResponseUtils.write(response, genericResponseDTO, HttpStatus.OK.value(), token);
