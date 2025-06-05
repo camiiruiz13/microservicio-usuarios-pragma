@@ -37,9 +37,10 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
     private final AuthenticationManager authenticationManager;
 
 
-    private final String AUTHORITHIES ="authorities";
-    private final String USERNAME = "username";
-    private final String TOKEN = "token";
+    private static final String AUTHORITIES = "authorities";
+    private static final String USERNAME = "username";
+    private static final String TOKEN = "token";
+
 
 
 
@@ -50,7 +51,7 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
         return authenticationManager.authenticate(authenticationToken);
     }
 
-    public GenericResponseDTO generateTokenResponse(Authentication authResult) throws IOException {
+    public GenericResponseDTO<Map<String, Object>> generateTokenResponse(Authentication authResult) throws IOException {
 
         AuthenticatedUser user = (AuthenticatedUser) authResult.getPrincipal();
         String username = user.getUsername();
@@ -58,7 +59,7 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
 
 
         Claims claims = Jwts.claims()
-                .add(AUTHORITHIES, new ObjectMapper().writeValueAsString(roles))
+                .add(AUTHORITIES, new ObjectMapper().writeValueAsString(roles))
                 .add(USERNAME, username)
                 .build();
 
@@ -84,7 +85,6 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
             throws AuthenticationException {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-          String password =  new BCryptPasswordEncoder().encode("12345");
 
 
             return authenticateUser(user);
@@ -96,7 +96,7 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        GenericResponseDTO genericResponseDTO = generateTokenResponse(authResult);
+        GenericResponseDTO<Map<String, Object>> genericResponseDTO = generateTokenResponse(authResult);
 
         String token = TokenJwtConfig.PREFIX_TOKEN + ((Map<String, Object>) genericResponseDTO.getObjectResponse()).get("token").toString();
 

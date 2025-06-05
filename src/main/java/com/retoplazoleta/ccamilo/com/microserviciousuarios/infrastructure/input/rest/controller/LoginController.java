@@ -53,11 +53,7 @@ public class LoginController {
             @RequestBody LoginDTO request) {
 
 
-        GenericResponseDTO responseDTO = userHandler.login(request);
-        return new ResponseEntity<>(
-                responseDTO,
-                HttpStatus.OK
-        );
+
     }
 
 
