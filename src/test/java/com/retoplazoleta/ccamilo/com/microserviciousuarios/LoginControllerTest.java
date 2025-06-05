@@ -28,7 +28,7 @@ class LoginControllerTest {
     private LoginController loginController;
 
     @Test
-    void createUser_ShouldReturnOkResponse() {
+    void login_ShouldReturnOkResponse() {
 
         LoginDTO loginDTO = new LoginDTO();
         GenericResponseDTO<Void> expectedResponse = new GenericResponseDTO<>();
@@ -37,7 +37,7 @@ class LoginControllerTest {
 
 
 
-        ResponseEntity<GenericResponseDTO<Void>> response = loginController.createUser(loginDTO);
+        ResponseEntity<GenericResponseDTO<Void>> response = loginController.login(loginDTO);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedResponse, response.getBody());
