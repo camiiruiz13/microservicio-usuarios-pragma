@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.ERROR_CREDENCIALES;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.INVALID_TOKEN;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.SESSION_SUCCES;
 
 @RequiredArgsConstructor
@@ -52,33 +53,34 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
         return authenticationManager.authenticate(authenticationToken);
     }
 
-    public Map<String, Object>  generateTokenResponse(Authentication authResult) throws IOException {
+    public Map<String, Object> generateTokenResponse(Authentication authResult) {
+        try {
+            AuthenticatedUser user = (AuthenticatedUser) authResult.getPrincipal();
+            String username = user.getUsername();
+            Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
-        AuthenticatedUser user = (AuthenticatedUser) authResult.getPrincipal();
-        String username = user.getUsername();
-        Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
+            Claims claims = Jwts.claims()
+                    .add(AUTHORITIES, new ObjectMapper().writeValueAsString(roles))
+                    .add(USERNAME, username)
+                    .build();
 
+            String token = Jwts.builder()
+                    .subject(username)
+                    .claims(claims)
+                    .expiration(new Date(System.currentTimeMillis() + 3600000))
+                    .issuedAt(new Date())
+                    .signWith(TokenJwtConfig.SECRET_KEY)
+                    .compact();
 
-        Claims claims = Jwts.claims()
-                .add(AUTHORITIES, new ObjectMapper().writeValueAsString(roles))
-                .add(USERNAME, username)
-                .build();
-
-        String token = Jwts.builder()
-                .subject(username)
-                .claims(claims)
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
-                .issuedAt(new Date())
-                .signWith(TokenJwtConfig.SECRET_KEY)
-                .compact();
-
-        Map<String, Object> body = new HashMap<>();
-        body.put(TOKEN, token);
-        body.put(USERNAME, username);
-        return body;
-
-
+            Map<String, Object> body = new HashMap<>();
+            body.put(TOKEN, token);
+            body.put(USERNAME, username);
+            return body;
+        } catch (Exception e) {
+            throw new AutenticationException(INVALID_TOKEN.getMessage(), e);
+        }
     }
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)

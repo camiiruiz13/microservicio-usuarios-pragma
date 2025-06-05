@@ -3,6 +3,7 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.LoginDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.response.UserDTOResponse;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.auth.AuthenticationFilter;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +31,7 @@ import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure
 @RequiredArgsConstructor
 public class LoginController {
 
+    private final AuthenticationManager authenticationManager;
     private final IUserHandler userHandler;
 
 
@@ -53,11 +57,11 @@ public class LoginController {
                     )
             )
             @RequestBody LoginDTO request) {
-
+        AuthenticationFilter jwtAuthenticationFilter = new AuthenticationFilter(authenticationManager);
         UserDTOResponse userDTOResponse = userHandler.login(request);
-
-
-
+        request.setCorreo(userDTOResponse.getCorreo());
+        Authentication authentication = jwtAuthenticationFilter.authenticateUser(request);
+        return jwtAuthenticationFilter.generateTokenResponse(authentication);
     }
 
 
