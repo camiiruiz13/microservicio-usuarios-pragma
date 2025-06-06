@@ -61,7 +61,8 @@ public class LoginController {
         UserDTOResponse userDTOResponse = userHandler.login(request);
         request.setCorreo(userDTOResponse.getCorreo());
         Authentication authentication = jwtAuthenticationFilter.authenticateUser(request);
-        return jwtAuthenticationFilter.generateTokenResponse(authentication);
+        Map<String, Object> response = jwtAuthenticationFilter.generateTokenResponse(authentication);
+        return ResponseEntity.ok((GenericResponseDTO<Map<String, Object>>) response);
     }
 
 

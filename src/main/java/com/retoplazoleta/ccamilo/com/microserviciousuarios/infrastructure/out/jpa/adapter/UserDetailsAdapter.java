@@ -1,4 +1,4 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.adapter;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.adapter;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;

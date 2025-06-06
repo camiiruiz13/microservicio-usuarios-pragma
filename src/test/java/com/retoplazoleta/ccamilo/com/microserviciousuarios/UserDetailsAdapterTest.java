@@ -3,7 +3,7 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.adapter.UserDetailsAdapter;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.adapter.UserDetailsAdapter;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

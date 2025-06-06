@@ -1,16 +1,15 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.adapter;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.adapter;
 
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.exception.AutenticationException;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.UserEntity;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.mapper.UserEntityMapper;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.repositories.RoleRepository;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.repositories.UserRepository;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.entities.UserEntity;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.mapper.UserEntityMapper;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.repositories.RoleRepository;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.ERROR_CREDENCIALES;
@@ -19,7 +18,7 @@ import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure
 @RequiredArgsConstructor
 public class UserJpaAdapter implements IUserPersistencePort {
 
-    private final PasswordEncoder passwordEncoder;
+
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final UserEntityMapper userEntityMapper;
@@ -27,7 +26,6 @@ public class UserJpaAdapter implements IUserPersistencePort {
     @Override
     public User saveUser(User user) {
         UserEntity userEntity = userEntityMapper.toUserEntity(user);
-        userEntity.setClave(passwordEncoder.encode(userEntity.getClave()));
         userEntity = userRepository.save(userEntity);
         return userEntityMapper.toUserModel(userEntity);
     }
@@ -53,13 +51,6 @@ public class UserJpaAdapter implements IUserPersistencePort {
                 .orElse(null);
     }
 
-    @Override
-    public boolean esClaveValida(String clave, String claveBD) {
-        if (!passwordEncoder.matches(clave, claveBD)) {
-            throw new AutenticationException(ERROR_CREDENCIALES.getMessage());
-        }
-        return true;
-    }
 
 
 }

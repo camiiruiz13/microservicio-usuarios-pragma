@@ -1,5 +1,6 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model;
 
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.entities.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 /**
- * DTO for {@link com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.UserEntity}
+ * DTO for {@link UserEntity}
  */
 @Data
 @AllArgsConstructor
