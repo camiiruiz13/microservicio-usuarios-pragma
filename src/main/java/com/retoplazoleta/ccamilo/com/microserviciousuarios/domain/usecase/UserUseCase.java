@@ -7,11 +7,13 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IPasswordPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.RoleCode;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.regex.Pattern;
+
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.DomainConstants.REGEX_VALID_EMAIL;
 
 
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class UserUseCase implements IUserServicePort {
     private final IUserPersistencePort userPersistencePort;
 
     @Override
-    public void crearUserPropietario(User user, String role) {
+    public void createUser(User user, String role) {
         validateUserFields(user);
         user.setClave(passwordPersistencePort.encriptarClave(user.getClave()));
         user.setRol(getRoleByNombre(role));
@@ -62,9 +64,6 @@ public class UserUseCase implements IUserServicePort {
             throw new UserDomainException(UserValidationMessage.DOCUMENTO_NO_NUMERICO.getMensaje());
         }
 
-        if (userPersistencePort.getUsuarioByNumeroDocumento(user.getNumeroDocumento()) != null) {
-            throw new UserDomainException(UserValidationMessage.NUMERODOC_REGISTRADO.getMensaje());
-        }
 
         if (isNullOrEmpty(user.getCelular())) {
             throw new UserDomainException(UserValidationMessage.CELULAR_OBLIGATORIO.getMensaje());
@@ -106,8 +105,7 @@ public class UserUseCase implements IUserServicePort {
     }
 
     private boolean isValidEmail(String email) {
-        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        return Pattern.matches(regex, email);
+        return Pattern.matches(REGEX_VALID_EMAIL.getMessage(), email);
     }
 
     private boolean isValidPhone(String phone) {

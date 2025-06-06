@@ -3,10 +3,12 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.adapter.UserDetailsAdapter;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.encoder.UserDetailsAdapter;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserDetailsAdapterTest {
 
     @Mock

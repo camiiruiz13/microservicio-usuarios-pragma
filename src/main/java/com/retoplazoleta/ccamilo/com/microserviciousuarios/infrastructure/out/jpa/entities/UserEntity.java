@@ -16,9 +16,7 @@ import java.time.LocalDate;
 @Table(
         name = "usuarios",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uq_usuario_correo", columnNames = "correo"),
-                @UniqueConstraint(name = "uq_usuario_documento", columnNames = "numero_documento")
-        }
+                @UniqueConstraint(name = "uq_usuario_correo", columnNames = "correo"),}
 )
 public class UserEntity {
 

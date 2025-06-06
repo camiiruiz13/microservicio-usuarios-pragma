@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,15 +23,15 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserJpaAdapterTest {
 
+
     @Mock
     private UserRepository userRepository;
 
     @Mock
-    private UserEntityMapper userEntityMapper;
-
-    @Mock
     private RoleRepository roleRepository;
 
+    @Mock
+    private UserEntityMapper userEntityMapper;
 
     @InjectMocks
     private UserJpaAdapter userJpaAdapter;
@@ -40,32 +39,33 @@ class UserJpaAdapterTest {
 
     @Test
     @Order(1)
-    void saveUser_debeGuardarUsuarioConClaveEncriptada() {
+    void saveUser_debeGuardarUsuarioConExito() {
+
         User user = new User();
-        user.setId(1L);
-        user.setNombre("Test");
-        user.setApellido("Test");
-        user.setNumeroDocumento("123456");
-        user.setCorreo("correo@test.com");
-        user.setClave("123456");
-        user.setFechaNacimiento(LocalDate.now().minusYears(20));
+        user.setCorreo("test@correo.com");
 
         UserEntity userEntity = new UserEntity();
-        userEntity.setClave("123456");
+        userEntity.setCorreo("test@correo.com");
 
-        String claveEncriptada = "$2a$10$abc123";
+        UserEntity savedEntity = new UserEntity();
+        savedEntity.setCorreo("test@correo.com");
+
+        User userFinal = new User();
+        userFinal.setCorreo("test@correo.com");
 
         when(userEntityMapper.toUserEntity(user)).thenReturn(userEntity);
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
-        when(userEntityMapper.toUserModel(userEntity)).thenReturn(user);
+        when(userRepository.save(userEntity)).thenReturn(savedEntity);
+        when(userEntityMapper.toUserModel(savedEntity)).thenReturn(userFinal);
+
 
         User result = userJpaAdapter.saveUser(user);
 
+
         assertNotNull(result);
+        assertEquals("test@correo.com", result.getCorreo());
         verify(userEntityMapper).toUserEntity(user);
         verify(userRepository).save(userEntity);
-        verify(userEntityMapper).toUserModel(userEntity);
-        assertEquals(claveEncriptada, userEntity.getClave());
+        verify(userEntityMapper).toUserModel(savedEntity);
     }
 
 

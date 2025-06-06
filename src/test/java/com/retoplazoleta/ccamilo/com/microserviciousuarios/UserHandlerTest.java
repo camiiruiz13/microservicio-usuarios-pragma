@@ -7,7 +7,7 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.i
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.mapper.UserResponseDTOMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.api.IUserServicePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.RoleCode;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.mapper.UserRequestDTOMapper;
 
 
@@ -55,7 +55,7 @@ class UserHandlerTest {
 
 
         verify(userRequestDTOMapper).toUser(userDTO);
-        verify(userServicePort).crearUserPropietario(user, RoleCode.ADMIN.name());
+        verify(userServicePort).createUser(user, RoleCode.ADMIN.name());
     }
 
     @Test

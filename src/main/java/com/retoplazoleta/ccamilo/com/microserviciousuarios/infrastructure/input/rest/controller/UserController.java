@@ -90,7 +90,7 @@ public class UserController {
 
         return new ResponseEntity<>(
                 ResponseUtils.buildResponse(FIND_USER_SUCCES.getMessage(), userDTO, HttpStatus.OK),
-                HttpStatus.CREATED
+                HttpStatus.OK
         );
     }
 }

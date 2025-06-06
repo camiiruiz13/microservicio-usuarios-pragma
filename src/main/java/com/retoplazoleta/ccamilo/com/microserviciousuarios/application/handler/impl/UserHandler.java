@@ -23,7 +23,7 @@ public class UserHandler implements IUserHandler {
     @Override
     public void crearUserPropietario(UserDTO userDTO, String role) {
         User user = userRequestDTOMapper.toUser(userDTO);
-        userServicePort.crearUserPropietario(user, role);
+        userServicePort.createUser(user, role);
     }
 
     @Override
