@@ -76,6 +76,7 @@ jacocoTestReport {
                             '**/config/**',
                             '**/documentation/**',
                             '**/entities/**',
+                            '**/constants/**',
                             '**/mapper/**',
                             '**/security/handler/CustomAccessDeniedHandler.class',
                             '**/security/handler/CustomAuthenticationEntryPoint.class',
