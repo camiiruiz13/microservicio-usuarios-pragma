@@ -5,6 +5,7 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.User
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserValidationMessage;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IPasswordPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.usecase.UserUseCase;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
@@ -24,8 +25,13 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserUseCaseTest {
 
+
+
     @Mock
     private IUserPersistencePort userPersistencePort;
+
+    @Mock
+    private  IPasswordPersistencePort passwordPersistencePort;
 
     @InjectMocks
     private UserUseCase userUseCase;
@@ -33,16 +39,23 @@ class UserUseCaseTest {
     @Test
     @Order(1)
     void crearUserPropietario_debeEjecutarseCorrectamente() {
+
         User user = buildValidUser();
+        user.setClave("clave123");
+
         Role role = new Role();
 
+
+        when(passwordPersistencePort.encriptarClave(user.getClave())).thenReturn("clave123Encriptada");
         when(userPersistencePort.getUsuarioByNumeroDocumento(user.getNumeroDocumento())).thenReturn(null);
         when(userPersistencePort.getUsuarioByCorreo(user.getCorreo())).thenReturn(null);
         when(userPersistencePort.getRoleByNombre(RoleCode.PROPIETARIO.name())).thenReturn(role);
 
+
         assertDoesNotThrow(() -> userUseCase.crearUserPropietario(user, RoleCode.ADMIN.name()));
         verify(userPersistencePort).saveUser(user);
     }
+
 
     @Test
     @Order(2)
@@ -175,7 +188,7 @@ class UserUseCaseTest {
         user.setClave("12345");
 
         when(userPersistencePort.getUsuarioByCorreo(user.getCorreo())).thenReturn(user);
-        when(userPersistencePort.esClaveValida("12345", "12345")).thenReturn(true);
+        when(passwordPersistencePort.esClaveValida("12345", "12345")).thenReturn(true);
 
         User result = userUseCase.login(user.getCorreo(), "12345");
         assertEquals(user, result);

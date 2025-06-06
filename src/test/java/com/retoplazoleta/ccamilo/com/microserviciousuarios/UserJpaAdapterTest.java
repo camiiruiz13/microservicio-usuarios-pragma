@@ -53,7 +53,7 @@ class UserJpaAdapterTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setClave("123456");
 
-        String claveEncriptada = "$2a$10$abc123"; // ejemplo
+        String claveEncriptada = "$2a$10$abc123";
 
         when(userEntityMapper.toUserEntity(user)).thenReturn(userEntity);
         when(userRepository.save(userEntity)).thenReturn(userEntity);

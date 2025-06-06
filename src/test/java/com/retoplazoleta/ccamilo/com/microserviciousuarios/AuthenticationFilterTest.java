@@ -14,7 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ErrorException.ERROR_CREDENCIALES;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.SESSION_SUCCES;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -72,7 +75,7 @@ class AuthenticationFilterTest {
 
     @Test
     @Order(2)
-    void generateTokenResponse_debeRetornarTokenYUsername() throws Exception {
+    void generateTokenResponse_debeRetornarTokenYUsername()  {
         Collection<? extends GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
 
         AuthenticatedUser authenticatedUser = new AuthenticatedUser("1", "user@example.com", "user@example.com", authorities);
@@ -129,7 +132,6 @@ class AuthenticationFilterTest {
     @Order(5)
     void successfulAuthentication_escribeTokenEnRespuesta() throws Exception {
         Collection<? extends GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
-
         AuthenticatedUser authenticatedUser = new AuthenticatedUser("1", "test@correo.com", "test@correo.com", authorities);
         when(authentication.getPrincipal()).thenReturn(authenticatedUser);
 
@@ -138,13 +140,25 @@ class AuthenticationFilterTest {
                 "username", "test@correo.com"
         );
 
-        AuthenticationFilter spyFilter = spy(authenticationFilter);
-        doReturn(mockMap).when(spyFilter).generateTokenResponse(authentication);
+        GenericResponseDTO<Map<String, Object>> dtoEsperado = new GenericResponseDTO<>();
+        dtoEsperado.setObjectResponse(mockMap); // o setData() según tu clase
+        dtoEsperado.setMessage(SESSION_SUCCES.getMessage() + "test@correo.com");
+
+        AuthenticationFilter spyFilter = Mockito.mock(AuthenticationFilter.class, withSettings()
+                .useConstructor(authenticationManager)
+                .defaultAnswer(CALLS_REAL_METHODS));
+
+        when(spyFilter.generateTokenResponse(authentication)).thenReturn(mockMap);
 
         try (MockedStatic<ResponseUtils> utilsMock = mockStatic(ResponseUtils.class)) {
+            utilsMock.when(() -> ResponseUtils.buildResponse(
+                    eq(SESSION_SUCCES.getMessage() + "test@correo.com"),
+                    eq(mockMap),
+                    eq(HttpStatus.OK)
+            )).thenReturn(dtoEsperado);
+
             utilsMock.when(() -> ResponseUtils.write(any(), any(), anyInt(), anyString()))
                     .thenAnswer(invocation -> null);
-
 
             TestUtil.invokePrivateMethod(
                     spyFilter,
@@ -156,12 +170,14 @@ class AuthenticationFilterTest {
 
             utilsMock.verify(() -> ResponseUtils.write(
                     eq(response),
-                    any(GenericResponseDTO.class),
+                    eq(dtoEsperado),
                     eq(200),
                     eq("Bearer mock-token")
             ));
         }
     }
+
+
 
 
 

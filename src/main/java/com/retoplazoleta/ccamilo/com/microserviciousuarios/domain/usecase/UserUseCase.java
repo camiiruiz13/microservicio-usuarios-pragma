@@ -5,6 +5,7 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.User
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserValidationMessage;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IPasswordPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,13 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class UserUseCase implements IUserServicePort {
 
+    private final IPasswordPersistencePort passwordPersistencePort;
     private final IUserPersistencePort userPersistencePort;
 
     @Override
     public void crearUserPropietario(User user, String role) {
         validateUserFields(user);
+        user.setClave(passwordPersistencePort.encriptarClave(user.getClave()));
         user.setRol(getRoleByNombre(role));
         userPersistencePort.saveUser(user);
     }
@@ -29,7 +32,7 @@ public class UserUseCase implements IUserServicePort {
     public User login(String correo, String clave) {
         loginField(correo, clave);
         User user = findByCorreo(correo);
-        userPersistencePort.esClaveValida(clave, user.getClave());
+        passwordPersistencePort.esClaveValida(clave, user.getClave());
         return user;
     }
 

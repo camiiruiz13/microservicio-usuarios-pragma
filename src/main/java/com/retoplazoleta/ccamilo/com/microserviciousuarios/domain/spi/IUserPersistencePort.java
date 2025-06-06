@@ -9,5 +9,5 @@ public interface IUserPersistencePort {
     User getUsuarioByCorreo(String correo);
     Role getRoleByNombre(String nombre);
     User getUsuarioByNumeroDocumento(String numeroDocumento);
-    boolean esClaveValida(String clave, String claveBD);
+
 }
