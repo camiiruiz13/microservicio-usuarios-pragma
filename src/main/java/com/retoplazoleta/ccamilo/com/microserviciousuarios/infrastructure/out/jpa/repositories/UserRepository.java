@@ -1,6 +1,6 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.repositories;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.repositories;
 
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities.UserEntity;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

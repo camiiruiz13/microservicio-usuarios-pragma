@@ -1,12 +1,16 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.response.UserDTOResponse;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.controller.UserController;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.UserRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserControllerTest {
 
     @Mock
@@ -35,6 +40,7 @@ class UserControllerTest {
     private UserController userController;
 
     @Test
+    @Order(1)
     void createUser_debeRetornarResponseEntityConStatusCreated() {
 
         UserRequest request = new UserRequest();
@@ -56,8 +62,6 @@ class UserControllerTest {
                 List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
 
-        //when(modelMapper.map(eq(request), eq(UserDTO.class))).thenReturn(userDTO);
-
 
         ResponseEntity<GenericResponseDTO<Void>> response = userController.createUser(request, authenticatedUser);
 
@@ -68,6 +72,30 @@ class UserControllerTest {
         verify(userHandler).crearUserPropietario(userDTO, "ADMIN");
 
     }
+
+    @Test
+    @Order(2)
+    void findByCorreo_debeRetornarUsuarioConStatusOk() {
+
+        String correo = "usuario@mail.com";
+
+        UserDTOResponse userDTOResponse = new UserDTOResponse();
+        userDTOResponse.setCorreo(correo);
+
+        when(userHandler.findByCorreo(correo)).thenReturn(userDTOResponse);
+
+
+        ResponseEntity<GenericResponseDTO<UserDTOResponse>> response = userController.findByCorreo(correo);
+
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(correo, response.getBody().getObjectResponse().getCorreo());
+
+        verify(userHandler).findByCorreo(correo);
+    }
+
 
 }
 

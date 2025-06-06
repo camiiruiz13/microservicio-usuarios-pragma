@@ -2,46 +2,27 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.LoginDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.exception.TokenInvalidException;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.response.UserDTOResponse;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.impl.UserHandler;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.mapper.UserResponseDTOMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.api.IUserServicePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util.RoleCode;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.auth.AuthenticationFilter;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.RoleCode;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.mapper.UserRequestDTOMapper;
 
 
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
-import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.application.exception.UserMessagesException.TOKEN_INVALID;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-
-import java.io.IOException;
 
 
 @ExtendWith(MockitoExtension.class)
 class UserHandlerTest {
-
-    @Mock
-    private Authentication authentication;
-
-    @Mock
-    private AuthenticationManager authenticationManager;
-
-
-    @Mock
-    private GenericResponseDTO<?> genericResponseDTO;
-
 
     @Mock
     private IUserServicePort userServicePort;
@@ -49,7 +30,8 @@ class UserHandlerTest {
     @Mock
     private UserRequestDTOMapper userRequestDTOMapper;
 
-
+    @Mock
+    private UserResponseDTOMapper userResponseDTOMapper;
 
     @InjectMocks
     private UserHandler userHandler;
@@ -69,53 +51,50 @@ class UserHandlerTest {
         when(userRequestDTOMapper.toUser(userDTO)).thenReturn(user);
 
 
-        userHandler.crearUserPropietario(userDTO, String.valueOf(RoleCode.ADMIN));
+        userHandler.crearUserPropietario(userDTO, RoleCode.ADMIN.name());
 
 
         verify(userRequestDTOMapper).toUser(userDTO);
-        verify(userServicePort).crearUserPropietario(user, String.valueOf(RoleCode.ADMIN));
+        verify(userServicePort).createUser(user, RoleCode.ADMIN.name());
     }
 
     @Test
-    void login_returnsGenericResponseDTO_onSuccess() throws IOException {
+    void login_debeRetornarUserDTOResponse() {
+        // Arrange
         LoginDTO loginDTO = new LoginDTO();
         loginDTO.setCorreo("test@example.com");
         loginDTO.setClave("password");
 
         User user = new User();
-        when(userRequestDTOMapper.toUser(any(UserDTO.class))).thenReturn(user);
+        UserDTOResponse expectedResponse = new UserDTOResponse();
 
-        try (MockedConstruction<AuthenticationFilter> mocked = mockConstruction(AuthenticationFilter.class,
-                (mock, context) -> {
-                    when(mock.authenticateUser(user)).thenReturn(authentication);
-                    when(mock.generateTokenResponse(authentication)).thenReturn(genericResponseDTO);
-                })) {
+        when(userServicePort.login(loginDTO.getCorreo(), loginDTO.getClave())).thenReturn(user);
+        when(userResponseDTOMapper.toDto(user)).thenReturn(expectedResponse);
 
-            GenericResponseDTO<?> response = userHandler.login(loginDTO);
-            assertEquals(genericResponseDTO, response);
-        }
+        UserDTOResponse actualResponse = userHandler.login(loginDTO);
+
+        // Assert
+        assertEquals(expectedResponse, actualResponse);
+        verify(userServicePort).login(loginDTO.getCorreo(), loginDTO.getClave());
+        verify(userResponseDTOMapper).toDto(user);
     }
-
 
     @Test
-    void login_throwsTokenInvalidException_onIOException() throws IOException {
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setCorreo("test@example.com");
-        loginDTO.setClave("password");
+    void findByCorreo_debeRetornarUserDTOResponse() {
 
+        String correo = "correo@correo.com";
         User user = new User();
-        when(userRequestDTOMapper.toUser(any(UserDTO.class))).thenReturn(user);
+        UserDTOResponse expectedResponse = new UserDTOResponse();
 
-        try (MockedConstruction<AuthenticationFilter> mocked = mockConstruction(AuthenticationFilter.class,
-                (mock, context) -> {
-                    when(mock.authenticateUser(user)).thenReturn(authentication);
-                    when(mock.generateTokenResponse(authentication)).thenThrow(new IOException("IO Error"));
-                })) {
+        when(userServicePort.findByCorreo(correo)).thenReturn(user);
+        when(userResponseDTOMapper.toDto(user)).thenReturn(expectedResponse);
 
-            TokenInvalidException exception = assertThrows(TokenInvalidException.class, () -> userHandler.login(loginDTO));
-            assertTrue(exception.getMessage().contains(TOKEN_INVALID.getMessage()));
-        }
+
+        UserDTOResponse actualResponse = userHandler.findByCorreo(correo);
+
+
+        assertEquals(expectedResponse, actualResponse);
+        verify(userServicePort).findByCorreo(correo);
+        verify(userResponseDTOMapper).toDto(user);
     }
-
-
 }

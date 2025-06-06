@@ -12,7 +12,6 @@ public enum UserValidationMessage {
     DOCUMENTO_OBLIGATORIO("El campo número de documento es obligatorio"),
     DOCUMENTO_NO_NUMERICO("El documento de identidad debe ser numérico"),
     CORREO_REGISTRADO("El correo ya está registrado"),
-    NUMERODOC_REGISTRADO("El documento ya está registrado"),
     CELULAR_OBLIGATORIO("El campo celular es obligatorio"),
     CORREO_OBLIGATORIO("El correo es obligatorio"),
     CORREO_INVALIDO("Correo no tiene una estructura válida"),

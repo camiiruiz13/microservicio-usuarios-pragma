@@ -1,4 +1,4 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.util;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants;
 
 public enum RoleCode {
 

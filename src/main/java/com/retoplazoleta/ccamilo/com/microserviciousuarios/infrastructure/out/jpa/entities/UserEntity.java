@@ -1,4 +1,4 @@
-package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.jpa.entities;
+package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,9 +16,7 @@ import java.time.LocalDate;
 @Table(
         name = "usuarios",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uq_usuario_correo", columnNames = "correo"),
-                @UniqueConstraint(name = "uq_usuario_documento", columnNames = "numero_documento")
-        }
+                @UniqueConstraint(name = "uq_usuario_correo", columnNames = "correo"),}
 )
 public class UserEntity {
 
