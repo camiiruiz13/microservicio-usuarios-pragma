@@ -49,7 +49,7 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class)))
     })
     @PostMapping(CREATE_USER)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROP')")
     public ResponseEntity<GenericResponseDTO<Void>> createUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = CREATE_USER_DESCRIPTION_REQUEST,
