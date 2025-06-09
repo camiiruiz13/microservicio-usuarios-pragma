@@ -41,7 +41,7 @@ class UserControllerTest {
 
     @Test
     @Order(1)
-    void createUser_debeRetornarResponseEntityConStatusCreated() {
+    void createUser_debeRetornarResponseEntityConStatusCreatedAdmin() {
 
         UserRequest request = new UserRequest();
 
@@ -69,7 +69,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(CREATE_USER_SUCCES.getMessage(), response.getBody().getMessage());
-        verify(userHandler).crearUserPropietario(userDTO, "ADMIN");
+        verify(userHandler).createUser(userDTO, "ADMIN");
 
     }
 
@@ -94,6 +94,70 @@ class UserControllerTest {
         assertEquals(correo, response.getBody().getObjectResponse().getCorreo());
 
         verify(userHandler).findByCorreo(correo);
+    }
+
+    @Test
+    @Order(3)
+    void createUser_debeRetornarResponseEntityConStatusCreatedEmp() {
+
+        UserRequest request = new UserRequest();
+
+
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setNombre("Carlos");
+        userDTO.setApellido("Pérez");
+        userDTO.setNumeroDocumento("123456789");
+        userDTO.setCorreo("carlos@mail.com");
+        userDTO.setCelular("+573001112233");
+        userDTO.setFechaNacimiento("01/01/2000");
+        userDTO.setClave("clave123");
+        request.setRequest(userDTO);
+
+        AuthenticatedUser authenticatedUser = new AuthenticatedUser(
+                "1", "carlos@mail.com", null,
+                List.of(new SimpleGrantedAuthority("ROLE_EMP"))
+        );
+
+
+        ResponseEntity<GenericResponseDTO<Void>> response = userController.createUser(request, authenticatedUser);
+
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(CREATE_USER_SUCCES.getMessage(), response.getBody().getMessage());
+        verify(userHandler).createUser(userDTO, "EMP");
+
+    }
+
+    @Test
+    @Order(4)
+    void createUser_debeRetornarResponseEntityConStatusCreatedCli() {
+
+        UserRequest request = new UserRequest();
+
+
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setNombre("Carlos");
+        userDTO.setApellido("Pérez");
+        userDTO.setNumeroDocumento("123456789");
+        userDTO.setCorreo("carlos@mail.com");
+        userDTO.setCelular("+573001112233");
+        userDTO.setFechaNacimiento("01/01/2000");
+        userDTO.setClave("clave123");
+        request.setRequest(userDTO);
+
+
+
+        ResponseEntity<GenericResponseDTO<Void>> response = userController.createUsertClient(request);
+
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(CREATE_USER_SUCCES.getMessage(), response.getBody().getMessage());
+
+
     }
 
 

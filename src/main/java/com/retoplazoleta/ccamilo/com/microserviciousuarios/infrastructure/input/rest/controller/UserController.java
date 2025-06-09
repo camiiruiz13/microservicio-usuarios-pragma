@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,7 @@ public class UserController {
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
 
         UserDTO userDTO =request.getRequest();
-        userHandler.crearUserPropietario(userDTO, authenticatedUser.getRol());
+        userHandler.createUser(userDTO, authenticatedUser.getRol());
         return new ResponseEntity<>(
                 ResponseUtils.buildResponse(CREATE_USER_SUCCES.getMessage(), HttpStatus.CREATED),
                 HttpStatus.CREATED
@@ -91,6 +92,36 @@ public class UserController {
         return new ResponseEntity<>(
                 ResponseUtils.buildResponse(FIND_USER_SUCCES.getMessage(), userDTO, HttpStatus.OK),
                 HttpStatus.OK
+        );
+    }
+
+    @Operation(summary = CREATE_USER_CLIENT_SUMMARY , description = CREATE_USER_DESCRIPTION, security = @SecurityRequirement(name = ""))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = HTTP_201, description = RESPONSE_201,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
+            @ApiResponse(responseCode = HTTP_400, description = RESPONSE_400,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
+            @ApiResponse(responseCode = HTTP_409, description = RESPONSE_409,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class))),
+            @ApiResponse(responseCode = HTTP_500, description = RESPONSE_500,
+                    content = @Content(schema = @Schema(implementation = GenericResponseDTO.class)))
+    })
+    @PostMapping(CREATE_USER_CLIENT)
+    public ResponseEntity<GenericResponseDTO<Void>> createUsertClient(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = CREATE_USER_DESCRIPTION_REQUEST,
+                    content = @Content(
+                            mediaType = CONTENT_TYPE,
+                            schema = @Schema(implementation = UserRequest.class)
+                    )
+            )
+            @RequestBody UserRequest request) {
+
+        UserDTO userDTO =request.getRequest();
+        userHandler.createUser(userDTO);
+        return new ResponseEntity<>(
+                ResponseUtils.buildResponse(CREATE_USER_SUCCES.getMessage(), HttpStatus.CREATED),
+                HttpStatus.CREATED
         );
     }
 }

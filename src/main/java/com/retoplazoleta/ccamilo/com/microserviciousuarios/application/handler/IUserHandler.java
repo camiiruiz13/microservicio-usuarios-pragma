@@ -5,7 +5,8 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.reque
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.response.UserDTOResponse;
 
 public interface IUserHandler {
-    void crearUserPropietario(UserDTO userDTO, String role);
+    void createUser(UserDTO userDTO, String role);
+    void createUser(UserDTO userDTO);
     UserDTOResponse login(LoginDTO loginDTO);
     UserDTOResponse findByCorreo(String correo);
 }

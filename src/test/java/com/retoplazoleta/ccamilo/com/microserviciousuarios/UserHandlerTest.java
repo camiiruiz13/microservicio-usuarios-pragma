@@ -37,7 +37,7 @@ class UserHandlerTest {
     private UserHandler userHandler;
 
     @Test
-    void crearUserPropietario_debeLlamarAlUseCaseConUsuarioMapeado() {
+    void createUser_debeLlamarAlUseCaseConUsuarioMapeado() {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setNombre("Juan");
@@ -51,7 +51,7 @@ class UserHandlerTest {
         when(userRequestDTOMapper.toUser(userDTO)).thenReturn(user);
 
 
-        userHandler.crearUserPropietario(userDTO, RoleCode.ADMIN.name());
+        userHandler.createUser(userDTO, RoleCode.ADMIN.name());
 
 
         verify(userRequestDTOMapper).toUser(userDTO);

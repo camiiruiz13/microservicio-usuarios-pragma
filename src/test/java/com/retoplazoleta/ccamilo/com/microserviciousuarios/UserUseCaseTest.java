@@ -253,6 +253,132 @@ class UserUseCaseTest {
                 () -> userUseCase.createUser(buildValidUser(), "INVALIDO"));
     }
 
+    @Test
+    @Order(22)
+    void createUser_sinRol_llamaCreateUserConNull() {
+        User user = buildValidUser();
+
+
+        when(userPersistencePort.getUsuarioByCorreo(user.getCorreo())).thenReturn(null);
+        when(userPersistencePort.getUsuarioByNumeroDocumento(user.getNumeroDocumento())).thenReturn(null);
+        when(userPersistencePort.getRoleByNombre(RoleCode.CLIENTE.name())).thenReturn(new Role());
+        when(passwordPersistencePort.encriptarClave(anyString())).thenReturn("encrypted");
+
+        assertDoesNotThrow(() -> userUseCase.createUser(user));
+
+        verify(userPersistencePort).saveUser(user);
+    }
+
+    @Test
+    @Order(23)
+    void nombreVacioClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setNombre("");
+        assertThrowsConMensaje(UserValidationMessage.NOMBRE_OBLIGATORIO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(24)
+    void apellidoVacioClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setApellido(" ");
+        assertThrowsConMensaje(UserValidationMessage.APELLIDO_OBLIGATORIO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(25)
+    void documentoVacioClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setNumeroDocumento(" ");
+        assertThrowsConMensaje(UserValidationMessage.DOCUMENTO_OBLIGATORIO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(26)
+    void documentoNoNumericoClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setNumeroDocumento("abc123");
+        assertThrowsConMensaje(UserValidationMessage.DOCUMENTO_NO_NUMERICO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+
+
+    @Test
+    @Order(27)
+    void celularVacioClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setCelular(" ");
+        assertThrowsConMensaje(UserValidationMessage.CELULAR_OBLIGATORIO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(28)
+    void celularInvalidoClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setCelular("abc");
+        assertThrowsConMensaje(UserValidationMessage.CELULAR_INVALIDO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(29)
+    void correoVacioClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setCorreo("");
+        assertThrowsConMensaje(UserValidationMessage.CORREO_OBLIGATORIO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(30)
+    void claveVaciaClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setClave("");
+        assertThrowsConMensaje(UserValidationMessage.CLAVE.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(31)
+    void correoClientYaExiste_lanzaExcepcion() {
+        User user = buildValidUser();
+
+        when(userPersistencePort.getUsuarioByNumeroDocumento(user.getNumeroDocumento())).thenReturn(null);
+        when(userPersistencePort.getUsuarioByCorreo(user.getCorreo())).thenReturn(new User());
+
+        assertThrowsConMensaje(UserValidationMessage.CORREO_REGISTRADO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(32)
+    void correoInvalidoClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setCorreo("invalido@");
+        when(userPersistencePort.getUsuarioByNumeroDocumento(user.getNumeroDocumento())).thenReturn(null);
+        when(userPersistencePort.getUsuarioByCorreo(user.getCorreo())).thenReturn(null);
+
+        assertThrowsConMensaje(UserValidationMessage.CORREO_INVALIDO.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+    @Test
+    @Order(33)
+    void fechaNacimientoNulaClient_lanzaExcepcion() {
+        User user = buildValidUser();
+        user.setFechaNacimiento(null);
+        assertThrowsConMensaje(UserValidationMessage.FECHA_NACIMIENTO_OBLIGATORIA.getMensaje(),
+                () -> userUseCase.createUser(user, null));
+    }
+
+
+
+
     private User buildValidUser() {
         User user = new User();
         user.setNombre("Test");
