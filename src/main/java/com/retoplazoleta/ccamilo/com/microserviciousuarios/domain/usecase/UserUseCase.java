@@ -24,10 +24,22 @@ public class UserUseCase implements IUserServicePort {
 
     @Override
     public void createUser(User user, String role) {
-        validateUserFields(user);
+        if (isNullOrEmpty(role)){
+
+            validateUserFieldsClient(user);
+            user.setRol(getRoleByNombre());
+        }
+        else {
+            validateUserFields(user);
+            user.setRol(getRoleByNombre(role));
+        }
         user.setClave(passwordPersistencePort.encriptarClave(user.getClave()));
-        user.setRol(getRoleByNombre(role));
         userPersistencePort.saveUser(user);
+    }
+
+    @Override
+    public void createUser(User user) {
+        createUser(user, null);
     }
 
     @Override
@@ -157,5 +169,55 @@ public class UserUseCase implements IUserServicePort {
 
 
     }
+
+    private void validateUserFieldsClient(User user) {
+
+        if (isNullOrEmpty(user.getNombre())) {
+            throw new UserDomainException(UserValidationMessage.NOMBRE_OBLIGATORIO.getMensaje());
+        }
+
+        if (isNullOrEmpty(user.getApellido())) {
+            throw new UserDomainException(UserValidationMessage.APELLIDO_OBLIGATORIO.getMensaje());
+        }
+
+        if (isNullOrEmpty(user.getNumeroDocumento())) {
+            throw new UserDomainException(UserValidationMessage.DOCUMENTO_OBLIGATORIO.getMensaje());
+        }
+
+        if (!isNumeric(user.getNumeroDocumento())) {
+            throw new UserDomainException(UserValidationMessage.DOCUMENTO_NO_NUMERICO.getMensaje());
+        }
+
+
+        if (isNullOrEmpty(user.getCelular())) {
+            throw new UserDomainException(UserValidationMessage.CELULAR_OBLIGATORIO.getMensaje());
+        }
+
+        if (!isValidPhone(user.getCelular())) {
+            throw new UserDomainException(UserValidationMessage.CELULAR_INVALIDO.getMensaje());
+        }
+
+        if (isNullOrEmpty(user.getCorreo())) {
+            throw new UserDomainException(UserValidationMessage.CORREO_OBLIGATORIO.getMensaje());
+        }
+
+
+        if (isNullOrEmpty(user.getClave())) {
+            throw new UserDomainException(UserValidationMessage.CLAVE.getMensaje());
+        }
+
+        if (userPersistencePort.getUsuarioByCorreo(user.getCorreo()) != null) {
+            throw new UserDomainException(UserValidationMessage.CORREO_REGISTRADO.getMensaje());
+        }
+
+        if (!isValidEmail(user.getCorreo())) {
+            throw new UserDomainException(UserValidationMessage.CORREO_INVALIDO.getMensaje());
+        }
+
+        if (user.getFechaNacimiento() == null) {
+            throw new UserDomainException(UserValidationMessage.FECHA_NACIMIENTO_OBLIGATORIA.getMensaje());
+        }
+    }
+
 
 }

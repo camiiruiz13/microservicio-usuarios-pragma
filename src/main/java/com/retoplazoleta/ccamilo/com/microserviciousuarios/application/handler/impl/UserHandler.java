@@ -21,9 +21,14 @@ public class UserHandler implements IUserHandler {
     private final UserResponseDTOMapper userResponseDTOMapper;
 
     @Override
-    public void crearUserPropietario(UserDTO userDTO, String role) {
+    public void createUser(UserDTO userDTO, String role) {
         User user = userRequestDTOMapper.toUser(userDTO);
         userServicePort.createUser(user, role);
+    }
+
+    @Override
+    public void createUser(UserDTO userDTO) {
+        createUser(userDTO,null);
     }
 
     @Override
