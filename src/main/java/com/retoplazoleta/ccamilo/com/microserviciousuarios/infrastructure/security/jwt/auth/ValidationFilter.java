@@ -1,5 +1,7 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.auth;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
@@ -12,17 +14,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import java.io.IOException;
-import java.util.Collection;
+import java.io.IOException;;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +31,16 @@ import java.util.Map;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages.TOKEN_INVALIDO;
 
 
-public class ValidationFilter extends BasicAuthenticationFilter
-{
+public class ValidationFilter extends BasicAuthenticationFilter {
 
+    private final ObjectMapper objectMapper;
     private final IUserPersistencePort userPersistencePort;
     private final String ERROR = "error";
 
-    public ValidationFilter(AuthenticationManager authenticationManager, IUserPersistencePort userPersistencePort) {
+
+    public ValidationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, IUserPersistencePort userPersistencePort) {
         super(authenticationManager);
+        this.objectMapper = objectMapper;
         this.userPersistencePort = userPersistencePort;
     }
 
@@ -57,10 +59,18 @@ public class ValidationFilter extends BasicAuthenticationFilter
         try {
             Claims claims = Jwts.parser().verifyWith(TokenJwtConfig.SECRET_KEY).build().parseSignedClaims(token).getPayload();
             String usename = claims.getSubject();
+            String authoritiesJson = (String) claims.get("authorities");
+            List<Map<String, String>> rolesList = objectMapper.readValue(
+                    authoritiesJson,
+                    new TypeReference<List<Map<String, String>>>() {}
+            );
+            List<SimpleGrantedAuthority> authorities = rolesList.stream()
+                    .map(roleMap -> new SimpleGrantedAuthority(roleMap.get("authority")))
+                    .toList();
+
             User user = userPersistencePort.getUsuarioByCorreo(usename);
             Long idUser = user.getId();
-            String rol = user.getRol().getNombre();
-            Collection<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + rol));
+
             AuthenticatedUser userAuthenticate = new AuthenticatedUser(
                     idUser.toString(),
                     usename,
