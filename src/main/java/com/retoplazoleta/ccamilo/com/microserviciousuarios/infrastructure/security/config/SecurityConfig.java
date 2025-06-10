@@ -1,5 +1,6 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.handler.CustomAccessDeniedHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.handler.CustomAuthenticationEntryPoint;
@@ -55,7 +56,7 @@ public class SecurityConfig {
 
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, IUserPersistencePort userPersistencePort) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, ObjectMapper objectMapper, IUserPersistencePort userPersistencePort) throws Exception {
 
         return http.authorizeHttpRequests((authz) -> authz
                         .requestMatchers(WHITE_LIST_URL).permitAll()
@@ -64,7 +65,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler)
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .addFilter(new AuthenticationFilter(authenticationManager()))
-                .addFilter(new ValidationFilter(authenticationManager(), userPersistencePort))
+                .addFilter(new ValidationFilter(authenticationManager(), objectMapper, userPersistencePort))
                 .csrf(config -> config.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();

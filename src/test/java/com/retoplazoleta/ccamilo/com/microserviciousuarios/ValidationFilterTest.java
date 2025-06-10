@@ -1,5 +1,7 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
@@ -22,6 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.TokenJwtConfig.HEADER_AUTHORIZATION;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.jwt.TokenJwtConfig.PREFIX_TOKEN;
@@ -33,6 +37,9 @@ class ValidationFilterTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @Mock
     private IUserPersistencePort userPersistencePort;
@@ -71,14 +78,17 @@ class ValidationFilterTest {
     void doFilterInternal_tokenValido_autenticaYContinua() throws Exception {
         String correo = "usuario@test.com";
 
+        String authoritiesJson = "[{\"authority\":\"ROLE_ADMIN\"}]";
+
         String token = Jwts.builder()
                 .subject(correo)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 60000))
+                .claim("authorities", authoritiesJson) // 👈 importante
                 .signWith(TokenJwtConfig.SECRET_KEY)
                 .compact();
 
-        when(request.getHeader(HEADER_AUTHORIZATION)).thenReturn(PREFIX_TOKEN  + token);
+        when(request.getHeader(HEADER_AUTHORIZATION)).thenReturn(PREFIX_TOKEN + token);
 
         User user = new User();
         user.setId(1L);
@@ -90,6 +100,11 @@ class ValidationFilterTest {
         when(userPersistencePort.getUsuarioByCorreo(correo)).thenReturn(user);
 
 
+        List<Map<String, String>> rolesList = List.of(Map.of("authority", "ROLE_ADMIN"));
+        when(objectMapper.readValue(
+                eq(authoritiesJson),
+                any(TypeReference.class)
+        )).thenReturn(rolesList);
 
         TestUtil.invokePrivateMethod(
                 validationFilter,
@@ -101,6 +116,7 @@ class ValidationFilterTest {
 
         verify(chain).doFilter(request, response);
     }
+
 
     @Test
     @Order(3)

@@ -26,12 +26,12 @@ public class UserUseCase implements IUserServicePort {
     public void createUser(User user, String role) {
         if (isNullOrEmpty(role)){
 
-            validateUserFieldsClient(user);
             user.setRol(getRoleByNombre());
+            validateUserFieldsClient(user);
         }
         else {
-            validateUserFields(user);
             user.setRol(getRoleByNombre(role));
+            validateUserFields(user);
         }
         user.setClave(passwordPersistencePort.encriptarClave(user.getClave()));
         userPersistencePort.saveUser(user);
