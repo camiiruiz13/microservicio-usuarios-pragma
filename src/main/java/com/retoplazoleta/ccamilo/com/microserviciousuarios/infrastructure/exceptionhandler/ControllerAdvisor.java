@@ -31,12 +31,7 @@ public class ControllerAdvisor {
         return new ResponseEntity<>(ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(TokenInvalidException.class)
-    public ResponseEntity<GenericResponseDTO<Void>> handleTokenInvalidException(TokenInvalidException ex) {
-        return new ResponseEntity<>(
-                ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED),
-                HttpStatus.UNAUTHORIZED
-        );
-    }
+
+
 
 }
