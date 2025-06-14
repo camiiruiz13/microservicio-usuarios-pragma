@@ -8,6 +8,8 @@ import lombok.Getter;
 public enum DomainConstants {
 
     REGEX_VALID_EMAIL("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"),
+    REGEX("^\\+?\\d{1,13}$"),
+    MATCHES("\\d+"),
     REGEX_VALID_PHONE("^\\+?\\d{1,13}$");
 
     private final String message;

@@ -1,6 +1,7 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.usecase;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.api.IUserServicePort;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.DomainConstants;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserDomainException;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.exception.UserValidationMessage;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 
-import static com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.DomainConstants.REGEX_VALID_EMAIL;
+import static com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.DomainConstants.*;
 
 
 @RequiredArgsConstructor
@@ -121,13 +122,13 @@ public class UserUseCase implements IUserServicePort {
     }
 
     private boolean isValidPhone(String phone) {
-        String regex = "^\\+?\\d{1,13}$";
+        String regex = REGEX.getMessage();
         return Pattern.matches(regex, phone);
     }
 
 
     private boolean isNumeric(String str) {
-        return str.matches("\\d+");
+        return str.matches(MATCHES.getMessage());
     }
 
     private boolean isAdult(LocalDate fechaNacimiento) {
