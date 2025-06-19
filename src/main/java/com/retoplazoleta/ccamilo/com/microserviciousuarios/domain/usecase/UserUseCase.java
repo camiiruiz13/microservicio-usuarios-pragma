@@ -59,6 +59,14 @@ public class UserUseCase implements IUserServicePort {
         return user;
     }
 
+    @Override
+    public User findById(Long idUser) {
+        User user = userPersistencePort.getUsuarioById(idUser);
+        if (user == null)
+            throw new UserDomainException(UserValidationMessage.NO_DATA_FOUND.getMensaje());
+        return user;
+    }
+
     private void validateUserFields(User user) {
 
         if (isNullOrEmpty(user.getNombre())) {

@@ -34,6 +34,13 @@ public class UserJpaAdapter implements IUserPersistencePort {
     }
 
     @Override
+    public User getUsuarioById(Long id) {
+        return userRepository.findById(id)
+                .map(userEntityMapper::toUserModel)
+                .orElse(null);
+    }
+
+    @Override
     public Role getRoleByNombre(String nombre) {
         return roleRepository.findByNombre(nombre)
                 .map(userEntityMapper::toRoleModel)
