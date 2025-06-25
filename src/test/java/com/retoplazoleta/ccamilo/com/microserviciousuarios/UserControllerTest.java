@@ -160,6 +160,23 @@ class UserControllerTest {
 
     }
 
+    @Test
+    @Order(5)
+    void findById_debeRetornarUsuarioConStatusOk() {
+
+        Long id = 1L;
+
+        UserDTOResponse userDTOResponse = new UserDTOResponse();
+        userDTOResponse.setIdUsuario(id);
+
+        when(userHandler.findById(id)).thenReturn(userDTOResponse);
+
+        ResponseEntity<GenericResponseDTO<UserDTOResponse>> response = userController.findById(id);
+
+        assertNotNull(response);
+
+    }
+
 
 }
 

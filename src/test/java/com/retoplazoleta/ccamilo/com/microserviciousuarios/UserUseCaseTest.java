@@ -257,15 +257,11 @@ class UserUseCaseTest {
     @Order(22)
     void createUser_sinRol_llamaCreateUserConNull() {
         User user = buildValidUser();
-
-
         when(userPersistencePort.getUsuarioByCorreo(user.getCorreo())).thenReturn(null);
         when(userPersistencePort.getUsuarioByNumeroDocumento(user.getNumeroDocumento())).thenReturn(null);
         when(userPersistencePort.getRoleByNombre(RoleCode.CLIENTE.name())).thenReturn(new Role());
         when(passwordPersistencePort.encriptarClave(anyString())).thenReturn("encrypted");
-
         assertDoesNotThrow(() -> userUseCase.createUser(user));
-
         verify(userPersistencePort).saveUser(user);
     }
 
@@ -376,7 +372,39 @@ class UserUseCaseTest {
                 () -> userUseCase.createUser(user, null));
     }
 
+    @Test
+    @Order(34)
+    void findByIdUsuer_exitoso() {
+        User user = buildValidUser();
+        user.setId(1L);
+        when(userPersistencePort.getUsuarioById(1L)).thenReturn(user);
+        User result = userUseCase.findById(1L);
+        assertEquals(user, result);
+    }
 
+    @Test
+    @Order(35)
+    void findByIdUsuer_null() {
+        User user = buildValidUser();
+        user.setId(1L);
+        when(userPersistencePort.getUsuarioById(10L)).thenReturn(null);
+        UserDomainException ex = assertThrows(UserDomainException.class, () -> userUseCase.findById(10L));
+        assertEquals(UserValidationMessage.NO_DATA_FOUND.getMensaje(), ex.getMessage());
+    }
+
+
+    @Test
+    @Order(35)
+    void getRoleByNombre_propietario_retornaEmpleado() {
+        Role empleado = new Role();
+        empleado.setNombre(RoleCode.EMPLEADO.name());
+        when(userPersistencePort.getUsuarioByNumeroDocumento(anyString())).thenReturn(null);
+        when(userPersistencePort.getUsuarioByCorreo(anyString())).thenReturn(null);
+        when(userPersistencePort.getRoleByNombre(RoleCode.EMPLEADO.name())).thenReturn(empleado);
+        User user = buildValidUser();
+
+        assertDoesNotThrow(() -> userUseCase.createUser(user, RoleCode.PROPIETARIO.name()));
+    }
 
 
     private User buildValidUser() {

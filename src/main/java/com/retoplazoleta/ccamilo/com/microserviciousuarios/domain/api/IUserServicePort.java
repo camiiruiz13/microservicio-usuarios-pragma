@@ -8,5 +8,6 @@ public interface IUserServicePort {
     void createUser(User user);
     User login(String correo, String clave);
     User findByCorreo(String correo);
+    User findById(Long idUser);
 
 }

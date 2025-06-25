@@ -43,4 +43,10 @@ public class UserHandler implements IUserHandler {
         User user = userServicePort.findByCorreo(correo);
         return userResponseDTOMapper.toDto(user);
     }
+
+    @Override
+    public UserDTOResponse findById(Long id) {
+        User user = userServicePort.findById(id);
+        return userResponseDTOMapper.toDto(user);
+    }
 }

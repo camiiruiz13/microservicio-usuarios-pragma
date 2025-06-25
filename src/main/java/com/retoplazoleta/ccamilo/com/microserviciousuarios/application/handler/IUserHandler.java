@@ -9,4 +9,5 @@ public interface IUserHandler {
     void createUser(UserDTO userDTO);
     UserDTOResponse login(LoginDTO loginDTO);
     UserDTOResponse findByCorreo(String correo);
+    UserDTOResponse findById(Long id);
 }

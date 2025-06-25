@@ -9,6 +9,7 @@ public enum ResponseMessages {
 
     CREATE_USER_SUCCES("Se ha creado el usuario correctamente "),
     FIND_USER_SUCCES("Se filtra el correo exitosamente "),
+    FIND_USER_ID_SUCCES("Se filtra el usuario por id  exitosamente "),
     SESSION_SUCCES("Inicio de sesion exitoso"),
     TOKEN_INVALIDO("El token JWT es invalido!");
 

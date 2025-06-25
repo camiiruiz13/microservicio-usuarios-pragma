@@ -49,10 +49,7 @@ class UserHandlerTest {
 
         User user = new User();
         when(userRequestDTOMapper.toUser(userDTO)).thenReturn(user);
-
-
         userHandler.createUser(userDTO, RoleCode.ADMIN.name());
-
 
         verify(userRequestDTOMapper).toUser(userDTO);
         verify(userServicePort).createUser(user, RoleCode.ADMIN.name());
@@ -88,13 +85,38 @@ class UserHandlerTest {
 
         when(userServicePort.findByCorreo(correo)).thenReturn(user);
         when(userResponseDTOMapper.toDto(user)).thenReturn(expectedResponse);
-
-
         UserDTOResponse actualResponse = userHandler.findByCorreo(correo);
-
-
         assertEquals(expectedResponse, actualResponse);
         verify(userServicePort).findByCorreo(correo);
         verify(userResponseDTOMapper).toDto(user);
+    }
+
+    @Test
+    void findById_debeRetornarUserDTOResponse() {
+        Long id = 1L;
+        User user = new User();
+        UserDTOResponse expectedResponse = new UserDTOResponse();
+        when(userServicePort.findById(id)).thenReturn(user);
+        when(userResponseDTOMapper.toDto(user)).thenReturn(expectedResponse);
+        UserDTOResponse actualResponse = userHandler.findById(id);
+        assertEquals(expectedResponse, actualResponse);
+        verify(userServicePort).findById(id);
+        verify(userResponseDTOMapper).toDto(user);
+    }
+
+    @Test
+    void createUserCliaeante_debeLlamarAlUseCaseConUsuarioMapeado() {
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setNombre("Juan");
+        userDTO.setApellido("Perez");
+        userDTO.setNumeroDocumento("123456");
+        userDTO.setCelular("+573001112233");
+        userDTO.setCorreo("correo@correo.com");
+        userDTO.setFechaNacimiento("02/06/2000");
+        User user = new User();
+        when(userRequestDTOMapper.toUser(userDTO)).thenReturn(user);
+        userHandler.createUser(userDTO);
+        verify(userServicePort).createUser(user, null);
     }
 }

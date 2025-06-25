@@ -164,6 +164,39 @@ class UserJpaAdapterTest {
         verifyNoInteractions(userEntityMapper);
     }
 
+    @Test
+    @Order(8)
+    void getUsuarioById_debeRetornarUsuarioCuandoExiste() {
+
+        Long idUser = 1L;
+        UserEntity userEntity = new UserEntity();
+        User user = new User();
+
+        when(userRepository.findById(idUser)).thenReturn(Optional.of(userEntity));
+        when(userEntityMapper.toUserModel(userEntity)).thenReturn(user);
+
+        User resultado = userJpaAdapter.getUsuarioById(idUser);
+
+        assertNotNull(resultado);
+        verify(userRepository).findById(idUser);
+        verify(userEntityMapper).toUserModel(userEntity);
+
+
+    }
+
+    @Test
+    @Order(9)
+    void getUsuarioByIdUser_debeLanzarExcepcionCuandoNoExiste() {
+        Long idUser = 100L;
+        when(userRepository.findById(idUser)).thenReturn(Optional.empty());
+
+        User result = userJpaAdapter.getUsuarioById(idUser);
+
+        assertNull(result);
+        verify(userRepository).findById(idUser);
+        verifyNoInteractions(userEntityMapper);
+    }
+
 
 
 

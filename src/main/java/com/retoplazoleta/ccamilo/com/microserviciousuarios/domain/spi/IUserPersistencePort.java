@@ -7,6 +7,7 @@ public interface IUserPersistencePort {
 
     User saveUser(User user);
     User getUsuarioByCorreo(String correo);
+    User getUsuarioById(Long id);
     Role getRoleByNombre(String nombre);
     User getUsuarioByNumeroDocumento(String numeroDocumento);
 
