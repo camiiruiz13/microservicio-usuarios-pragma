@@ -20,6 +20,7 @@ public enum UserValidationMessage {
     FECHA_NACIMIENTO_OBLIGATORIA("La fecha de nacimiento es obligatoria"),
     NO_MAYOR_DE_EDAD("El usuario debe ser mayor de edad"),
     NO_DATA_FOUND("Usuario no encontrado"),
+    NO_DATA_FOUND_USERS("Usuarios no encontrados"),
     ROLE_INVALIDO("Rol no permitido para crear usuario");
 
     private final String mensaje;

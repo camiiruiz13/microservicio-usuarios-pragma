@@ -1,6 +1,7 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.adapter;
 
 
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.RoleCode;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.Role;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.spi.IUserPersistencePort;
@@ -9,6 +10,8 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jp
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.repositories.RoleRepository;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -54,7 +57,10 @@ public class UserJpaAdapter implements IUserPersistencePort {
                 .orElse(null);
     }
 
-
+    @Override
+    public List<User> fetchEmployeesAndClients(List<Long> userIds, List<RoleCode> roles) {
+        return userEntityMapper.toUserModelList(userRepository.fetchEmployeesAndClients(userIds, roles));
+    }
 
 }
 

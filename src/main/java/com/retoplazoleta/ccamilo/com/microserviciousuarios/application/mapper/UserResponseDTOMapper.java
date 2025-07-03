@@ -10,6 +10,7 @@ import org.mapstruct.ReportingPolicy;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.application.exception.UserMessagesException.DATE_TIME_FORMATER;
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.application.exception.UserMessagesException.ILEGAL_FROMATER;
@@ -24,7 +25,7 @@ public interface UserResponseDTOMapper {
     @Mapping(source = "fechaNacimiento", target = "fechaNacimiento", qualifiedByName = "localDateToString")
     UserDTOResponse toDto(User user);
 
-
+    List<UserDTOResponse> toDtoList(List<User> users);
 
     @Named("stringToLocalDate")
     static LocalDate stringToLocalDate(String date) {

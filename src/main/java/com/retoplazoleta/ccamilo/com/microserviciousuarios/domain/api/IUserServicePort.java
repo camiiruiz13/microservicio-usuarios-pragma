@@ -2,6 +2,8 @@ package com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.api;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 
+import java.util.List;
+
 public interface IUserServicePort {
 
     void createUser(User user, String role);
@@ -9,5 +11,6 @@ public interface IUserServicePort {
     User login(String correo, String clave);
     User findByCorreo(String correo);
     User findById(Long idUser);
+    List<User> fetchEmployeesAndClients(Long idChef, Long idCliente);
 
 }

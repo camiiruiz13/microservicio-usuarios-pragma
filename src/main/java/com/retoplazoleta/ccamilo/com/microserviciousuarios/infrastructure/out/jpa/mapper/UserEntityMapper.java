@@ -6,6 +6,8 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jp
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.out.jpa.entities.UserEntity;
 import org.mapstruct.*;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE
@@ -18,6 +20,8 @@ public interface UserEntityMapper {
     RoleEntity toRoleEntity(Role model);
 
     Role toRoleModel(RoleEntity entity);
+
+    List<User> toUserModelList(List<UserEntity> userEntities);
 
 
 }

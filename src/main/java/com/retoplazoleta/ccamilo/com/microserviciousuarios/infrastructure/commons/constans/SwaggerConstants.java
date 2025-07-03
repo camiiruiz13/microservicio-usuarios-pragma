@@ -14,8 +14,12 @@ public class SwaggerConstants {
     public static final String CREATE_USER_CLIENT_SUMMARY = "Crear un usuario cliente";
     public static final String FIND_USER_SUMMARY = "Busca el usuario por correo";
     public static final String FIND_ID_SUMMARY = "Busca el usuario por el id correspondiente";
+    public static final String FIND_ID_TRACE_SUMMARY = "Obtengo datos del cliente y empleado";
     public static final String FIND_ID_DESCRIPTION = "Busca el usuario por el id correspondiente para consumir servicios de trazabilidad";
+    public static final String FIND_ID_CLIENTE_DESCRIPTION = "Busca el usuario por el id  correspondiente para consumir servicios de trazabilidad";
+    public static final String FIND_ID_CHEF_DESCRIPTION = "Busca el usuario por el id correspondiente para consumir servicios de trazabilidad";
     public static final String FIND_USER_ID_SUMMARY = "Busca el usuario por el id";
+    public static final String FIND_USER_ID_TRACE_SUMMARY = "Busca usuarios por el id cliente y empleado";
     public static final String LOGIN_SUMMARY = "Inicia sesion";
     public static final String CREATE_USER_DESCRIPTION = "Permite al rol correspondiente registrar un nuevo usuario segun sus criterios";
     public static final String FIND_USER_DESCRIPTION = "Filtra los usuarios por el correo correspondiente";
