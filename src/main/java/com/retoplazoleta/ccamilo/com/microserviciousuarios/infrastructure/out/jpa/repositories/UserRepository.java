@@ -20,5 +20,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             "WHERE u.id IN :userIds " +
             "AND r.nombre IN :roles ")
     List<UserEntity> fetchEmployeesAndClients(@Param("userIds") List<Long> userIds,
-                                              @Param("roles")   List<RoleCode> roles);
+                                              @Param("roles")   List<String> roles );
 }

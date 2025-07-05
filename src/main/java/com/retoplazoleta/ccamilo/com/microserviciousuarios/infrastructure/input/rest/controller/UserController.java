@@ -6,7 +6,6 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.respo
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
-import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.IdsRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
@@ -155,7 +154,7 @@ public class UserController {
         );
     }
 
-    @GetMapping(FIND_BY_ID_USERS)
+    @PostMapping(FIND_BY_ID_USERS)
     @Operation(summary = FIND_USER_ID_TRACE_SUMMARY, description = FIND_ID_TRACE_SUMMARY)
     @ApiResponses(value = {
             @ApiResponse(responseCode = HTTP_200, description = RESPONSE_200,

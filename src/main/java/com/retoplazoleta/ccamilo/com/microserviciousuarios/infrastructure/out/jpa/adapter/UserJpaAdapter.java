@@ -58,7 +58,7 @@ public class UserJpaAdapter implements IUserPersistencePort {
     }
 
     @Override
-    public List<User> fetchEmployeesAndClients(List<Long> userIds, List<RoleCode> roles) {
+    public List<User> fetchEmployeesAndClients(List<Long> userIds, List<String> roles ) {
         return userEntityMapper.toUserModelList(userRepository.fetchEmployeesAndClients(userIds, roles));
     }
 

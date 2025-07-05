@@ -74,7 +74,10 @@ public class UserUseCase implements IUserServicePort {
     public List<User> fetchEmployeesAndClients(List<Long> idChefs, List<Long> idClients) {
         List<Long> ids = Stream.concat(idChefs.stream(), idClients.stream())
                 .toList();
-        List<RoleCode> roles = List.of(RoleCode.EMPLEADO,RoleCode.CLIENTE);
+        List<String> roles = List.of(RoleCode.EMPLEADO, RoleCode.CLIENTE)
+                .stream()
+                .map(RoleCode::name)
+                .toList();
         List<User>  fetchEmployeesAndClients = userPersistencePort.fetchEmployeesAndClients(ids, roles);
         if (fetchEmployeesAndClients == null || fetchEmployeesAndClients.isEmpty())
             throw new UserDomainException(UserValidationMessage.NO_DATA_FOUND_USERS.getMensaje());

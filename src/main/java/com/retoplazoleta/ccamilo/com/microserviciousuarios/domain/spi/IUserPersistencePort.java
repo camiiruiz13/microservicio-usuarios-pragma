@@ -13,6 +13,6 @@ public interface IUserPersistencePort {
     User getUsuarioById(Long id);
     Role getRoleByNombre(String nombre);
     User getUsuarioByNumeroDocumento(String numeroDocumento);
-    List<User> fetchEmployeesAndClients(List<Long> userIds, List<RoleCode> roles);
+    List<User> fetchEmployeesAndClients(List<Long> userIds, List<String> roles) ;
 
 }
