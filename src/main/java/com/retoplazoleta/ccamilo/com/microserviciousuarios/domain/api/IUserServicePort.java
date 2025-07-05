@@ -11,6 +11,6 @@ public interface IUserServicePort {
     User login(String correo, String clave);
     User findByCorreo(String correo);
     User findById(Long idUser);
-    List<User> fetchEmployeesAndClients(Long idChef, Long idCliente);
+    List<User> fetchEmployeesAndClients(List<Long> idChefs, List<Long> idClients);
 
 }

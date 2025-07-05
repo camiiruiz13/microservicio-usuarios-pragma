@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.DomainConstants.*;
 
@@ -69,11 +71,12 @@ public class UserUseCase implements IUserServicePort {
     }
 
     @Override
-    public List<User> fetchEmployeesAndClients(Long idChef, Long idCliente) {
-        List<Long> ids = List.of(idChef, idCliente);
+    public List<User> fetchEmployeesAndClients(List<Long> idChefs, List<Long> idClients) {
+        List<Long> ids = Stream.concat(idChefs.stream(), idClients.stream())
+                .toList();
         List<RoleCode> roles = List.of(RoleCode.EMPLEADO,RoleCode.CLIENTE);
         List<User>  fetchEmployeesAndClients = userPersistencePort.fetchEmployeesAndClients(ids, roles);
-        if (fetchEmployeesAndClients == null && fetchEmployeesAndClients.isEmpty())
+        if (fetchEmployeesAndClients == null || fetchEmployeesAndClients.isEmpty())
             throw new UserDomainException(UserValidationMessage.NO_DATA_FOUND_USERS.getMensaje());
         return fetchEmployeesAndClients;
     }

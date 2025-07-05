@@ -16,8 +16,7 @@ public class SwaggerConstants {
     public static final String FIND_ID_SUMMARY = "Busca el usuario por el id correspondiente";
     public static final String FIND_ID_TRACE_SUMMARY = "Obtengo datos del cliente y empleado";
     public static final String FIND_ID_DESCRIPTION = "Busca el usuario por el id correspondiente para consumir servicios de trazabilidad";
-    public static final String FIND_ID_CLIENTE_DESCRIPTION = "Busca el usuario por el id  correspondiente para consumir servicios de trazabilidad";
-    public static final String FIND_ID_CHEF_DESCRIPTION = "Busca el usuario por el id correspondiente para consumir servicios de trazabilidad";
+
     public static final String FIND_USER_ID_SUMMARY = "Busca el usuario por el id";
     public static final String FIND_USER_ID_TRACE_SUMMARY = "Busca usuarios por el id cliente y empleado";
     public static final String LOGIN_SUMMARY = "Inicia sesion";

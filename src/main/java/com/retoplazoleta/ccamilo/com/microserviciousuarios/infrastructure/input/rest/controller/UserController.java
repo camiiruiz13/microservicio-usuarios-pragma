@@ -1,10 +1,13 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.controller;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserFilterDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.response.UserDTOResponse;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.commons.constans.ResponseMessages;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericRequest;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.IdsRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.util.ResponseUtils;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.UserRequest;
@@ -165,15 +168,20 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = GenericResponseDTO.class)))
     })
     public ResponseEntity<GenericResponseDTO<List<UserDTOResponse>>> findByIdUsers(
-            @PathVariable("idChef")
-            @Parameter(description = FIND_ID_CHEF_DESCRIPTION, required = true)
-            Long idChef,
-            @PathVariable("idCliente")
-            @Parameter(description = FIND_ID_CLIENTE_DESCRIPTION, required = true)
-            Long idCliente){
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = FIND_USER_DESCRIPTION,
+                    required = true,
+                    content = @Content(
+                            mediaType = CONTENT_TYPE,
+                            schema = @Schema(implementation = IdsRequest.class)
+                    )
+            )
+            @RequestBody IdsRequest request){
 
+
+        UserFilterDTO userFilterDTO =request.getRequest();
         return new ResponseEntity<>(
-                ResponseUtils.buildResponse(ResponseMessages.FIND_USERS_ID_SUCCES.getMessage(), userHandler.fetchEmployeesAndClients(idChef, idCliente), HttpStatus.OK),
+                ResponseUtils.buildResponse(ResponseMessages.FIND_USERS_ID_SUCCES.getMessage(), userHandler.fetchEmployeesAndClients(userFilterDTO.getChefIds(), userFilterDTO.getClientIds()), HttpStatus.OK),
                 HttpStatus.OK
         );
 

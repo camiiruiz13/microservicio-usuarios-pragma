@@ -12,5 +12,5 @@ public interface IUserHandler {
     UserDTOResponse login(LoginDTO loginDTO);
     UserDTOResponse findByCorreo(String correo);
     UserDTOResponse findById(Long id);
-    List<UserDTOResponse> fetchEmployeesAndClients(Long idChef, Long idCliente);
+    List<UserDTOResponse> fetchEmployeesAndClients(List<Long> idChefs, List<Long> idClients);
 }

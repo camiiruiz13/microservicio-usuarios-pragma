@@ -55,7 +55,7 @@ public class UserHandler implements IUserHandler {
     }
 
     @Override
-    public List<UserDTOResponse> fetchEmployeesAndClients(Long idChef, Long idCliente) {
-        return userResponseDTOMapper.toDtoList(userServicePort.fetchEmployeesAndClients(idChef, idCliente));
+    public List<UserDTOResponse> fetchEmployeesAndClients(List<Long> idChefs, List<Long> idClients) {
+        return userResponseDTOMapper.toDtoList(userServicePort.fetchEmployeesAndClients(idChefs, idChefs));
     }
 }
