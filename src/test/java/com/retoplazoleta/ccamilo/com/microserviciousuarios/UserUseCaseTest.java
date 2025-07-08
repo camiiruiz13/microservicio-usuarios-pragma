@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,8 +29,6 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserUseCaseTest {
 
-
-
     @Mock
     private IUserPersistencePort userPersistencePort;
 
@@ -38,6 +37,12 @@ class UserUseCaseTest {
 
     @InjectMocks
     private UserUseCase userUseCase;
+
+    @BeforeEach
+    void setUp() {
+        userUseCase = new UserUseCase(passwordPersistencePort, userPersistencePort);
+    }
+
 
     @Test
     @Order(1)
@@ -405,6 +410,70 @@ class UserUseCaseTest {
 
         assertDoesNotThrow(() -> userUseCase.createUser(user, RoleCode.PROPIETARIO.name()));
     }
+
+    @Test
+    @Order(36)
+    void fetchEmployeesAndClients_retornaListaCorrectamente() {
+        List<Long> chefs = List.of(1L, 2L);
+        List<Long> clients = List.of(3L);
+
+        List<Long> idsEsperados = List.of(1L, 2L, 3L);
+        List<String> rolesEsperados = List.of("EMPLEADO", "CLIENTE");
+
+        User user1 = new User();
+        user1.setId(1L);
+
+        User user2 = new User();
+        user2.setId(3L);
+
+        List<User> mockResponse = List.of(user1, user2);
+
+        when(userPersistencePort.fetchEmployeesAndClients(idsEsperados, rolesEsperados))
+                .thenReturn(mockResponse);
+
+        List<User> result = userUseCase.fetchEmployeesAndClients(chefs, clients);
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    @Order(37)
+    void fetchEmployeesAndClients_listaVacia_lanzaExcepcion() {
+        List<Long> chefs = List.of(1L);
+        List<Long> clients = List.of(2L);
+
+        List<Long> ids = List.of(1L, 2L);
+        List<String> roles = List.of("EMPLEADO", "CLIENTE");
+
+        when(userPersistencePort.fetchEmployeesAndClients(ids, roles))
+                .thenReturn(List.of()); // Simula lista vacía
+
+        UserDomainException ex = assertThrows(UserDomainException.class,
+                () -> userUseCase.fetchEmployeesAndClients(chefs, clients));
+
+        assertEquals(UserValidationMessage.NO_DATA_FOUND_USERS.getMensaje(), ex.getMessage());
+    }
+
+    @Test
+    @Order(38)
+    void fetchEmployeesAndClients_null_lanzaExcepcion() {
+        List<Long> chefs = List.of(1L);
+        List<Long> clients = List.of(2L);
+
+        List<Long> ids = List.of(1L, 2L);
+        List<String> roles = List.of("EMPLEADO", "CLIENTE");
+
+        when(userPersistencePort.fetchEmployeesAndClients(ids, roles))
+                .thenReturn(null);
+
+        UserDomainException ex = assertThrows(UserDomainException.class,
+                () -> userUseCase.fetchEmployeesAndClients(chefs, clients));
+
+        assertEquals(UserValidationMessage.NO_DATA_FOUND_USERS.getMensaje(), ex.getMessage());
+    }
+
+
+
 
 
     private User buildValidUser() {

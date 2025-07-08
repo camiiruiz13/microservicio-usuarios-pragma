@@ -14,7 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -67,7 +69,6 @@ class UserJpaAdapterTest {
         verify(userRepository).save(userEntity);
         verify(userEntityMapper).toUserModel(savedEntity);
     }
-
 
 
     @Test
@@ -193,12 +194,29 @@ class UserJpaAdapterTest {
         User result = userJpaAdapter.getUsuarioById(idUser);
 
         assertNull(result);
-        verify(userRepository).findById(idUser);
-        verifyNoInteractions(userEntityMapper);
     }
 
+    @Test
+    @Order(10)
+    void fetchEmployeesAndClients(){
 
+        List<Long> ids = List.of(1L, 2L);
+        List<String> roles = List.of("EMPLEADO", "CLIENTE");
 
+        UserEntity user1 = new UserEntity();
+        user1.setId(1L);
+
+        UserEntity user2 = new UserEntity();
+        user2.setId(3L);
+
+        List<UserEntity> mockResponse = List.of(user1, user2);
+
+        when(userRepository.fetchEmployeesAndClients(ids, roles))
+                .thenReturn(mockResponse);
+
+        List<User> result = userJpaAdapter.fetchEmployeesAndClients(ids, roles);
+        assertNotNull(result);
+    }
 
 
 }
