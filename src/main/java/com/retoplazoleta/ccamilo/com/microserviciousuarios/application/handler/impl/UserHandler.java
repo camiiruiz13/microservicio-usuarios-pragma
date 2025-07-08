@@ -10,9 +10,13 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.api.IUserServi
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserHandler implements IUserHandler {
 
 
@@ -48,5 +52,10 @@ public class UserHandler implements IUserHandler {
     public UserDTOResponse findById(Long id) {
         User user = userServicePort.findById(id);
         return userResponseDTOMapper.toDto(user);
+    }
+
+    @Override
+    public List<UserDTOResponse> fetchEmployeesAndClients(List<Long> idChefs, List<Long> idClients) {
+        return userResponseDTOMapper.toDtoList(userServicePort.fetchEmployeesAndClients(idChefs, idClients));
     }
 }

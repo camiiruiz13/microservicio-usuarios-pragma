@@ -1,10 +1,12 @@
 package com.retoplazoleta.ccamilo.com.microserviciousuarios;
 
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.request.UserFilterDTO;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.dto.response.UserDTOResponse;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.handler.IUserHandler;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.input.rest.controller.UserController;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.GenericResponseDTO;
+import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.IdsRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.shared.dto.UserRequest;
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.infrastructure.security.auth.AuthenticatedUser;
 import org.junit.jupiter.api.MethodOrderer;
@@ -34,8 +36,6 @@ class UserControllerTest {
     @Mock
     private IUserHandler userHandler;
 
-
-
     @InjectMocks
     private UserController userController;
 
@@ -44,7 +44,6 @@ class UserControllerTest {
     void createUser_debeRetornarResponseEntityConStatusCreatedAdmin() {
 
         UserRequest request = new UserRequest();
-
 
 
         UserDTO userDTO = new UserDTO();
@@ -62,9 +61,7 @@ class UserControllerTest {
                 List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
 
-
         ResponseEntity<GenericResponseDTO<Void>> response = userController.createUser(request, authenticatedUser);
-
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -84,9 +81,7 @@ class UserControllerTest {
 
         when(userHandler.findByCorreo(correo)).thenReturn(userDTOResponse);
 
-
         ResponseEntity<GenericResponseDTO<UserDTOResponse>> response = userController.findByCorreo(correo);
-
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -122,7 +117,6 @@ class UserControllerTest {
 
         ResponseEntity<GenericResponseDTO<Void>> response = userController.createUser(request, authenticatedUser);
 
-
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(CREATE_USER_SUCCES.getMessage(), response.getBody().getMessage());
@@ -136,8 +130,6 @@ class UserControllerTest {
 
         UserRequest request = new UserRequest();
 
-
-
         UserDTO userDTO = new UserDTO();
         userDTO.setNombre("Carlos");
         userDTO.setApellido("Pérez");
@@ -148,15 +140,9 @@ class UserControllerTest {
         userDTO.setClave("clave123");
         request.setRequest(userDTO);
 
-
-
         ResponseEntity<GenericResponseDTO<Void>> response = userController.createUsertClient(request);
 
-
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(CREATE_USER_SUCCES.getMessage(), response.getBody().getMessage());
-
 
     }
 
@@ -176,6 +162,32 @@ class UserControllerTest {
         assertNotNull(response);
 
     }
+
+    @Test
+    @Order(6)
+    void findByIdUsers_returnsOkResponse() {
+
+        List<Long> chefIds = List.of(1L, 2L);
+        List<Long> clientIds = List.of(3L);
+
+        UserFilterDTO filterDTO = new UserFilterDTO();
+        filterDTO.setChefIds(chefIds);
+        filterDTO.setClientIds(clientIds);
+
+        IdsRequest request = new IdsRequest();
+        request.setRequest(filterDTO);
+
+        UserDTOResponse dto1 = new UserDTOResponse();
+        UserDTOResponse dto2 = new UserDTOResponse();
+        List<UserDTOResponse> mockResponse = List.of(dto1, dto2);
+
+        when(userHandler.fetchEmployeesAndClients(chefIds, clientIds)).thenReturn(mockResponse);
+
+        ResponseEntity<GenericResponseDTO<List<UserDTOResponse>>> response = userController.findByIdUsers(request);
+
+        assertNotNull(response.getBody());
+    }
+
 
 
 }

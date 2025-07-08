@@ -27,4 +27,9 @@ public class SwaggerConstants {
     public static final String CLAVE_EXAMPLE = "clave123";
     public static final int CLAVE_MIN = 6;
     public static final int CLAVE_MAX = 13;
+
+    public static final String FIND_ID_CLIENTE_DESCRIPTION = "Busca el usuario por ids  correspondiente para consumir servicios de trazabilidad";
+    public static final String IDS_ARRAYS = "[1,2,3]";
+
+    public static final String FIND_ID_CHEF_DESCRIPTION = "Busca el usuario por ids correspondiente para consumir servicios de trazabilidad";
 }

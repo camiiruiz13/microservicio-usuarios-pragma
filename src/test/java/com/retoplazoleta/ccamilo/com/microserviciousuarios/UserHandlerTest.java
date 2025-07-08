@@ -11,11 +11,14 @@ import com.retoplazoleta.ccamilo.com.microserviciousuarios.domain.constants.Role
 import com.retoplazoleta.ccamilo.com.microserviciousuarios.application.mapper.UserRequestDTOMapper;
 
 
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -118,5 +121,29 @@ class UserHandlerTest {
         when(userRequestDTOMapper.toUser(userDTO)).thenReturn(user);
         userHandler.createUser(userDTO);
         verify(userServicePort).createUser(user, null);
+    }
+    @Test
+    void fetchEmployeesAndClients() {
+
+        List<Long> idsEmpleados = List.of(1L, 2L);
+        List<Long> idsClientes = List.of(3L);
+
+        User user1 = new User();
+        user1.setId(1L);
+
+        User user2 = new User();
+        user2.setId(3L);
+
+        List<User> dominioUsuarios = List.of(user1, user2);
+
+        UserDTOResponse dto1 = new UserDTOResponse();
+        UserDTOResponse dto2 = new UserDTOResponse();
+        List<UserDTOResponse> dtoList = List.of(dto1, dto2);
+
+        when(userServicePort.fetchEmployeesAndClients(idsEmpleados, idsClientes)).thenReturn(dominioUsuarios);
+        when(userResponseDTOMapper.toDtoList(dominioUsuarios)).thenReturn(dtoList);
+
+        List<UserDTOResponse> result = userHandler.fetchEmployeesAndClients(idsEmpleados, idsClientes);
+        assertNotNull(result);
     }
 }
